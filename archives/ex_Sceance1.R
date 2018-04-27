@@ -1,31 +1,6 @@
 library(ESG)
 
-# on va reprendre pas a pas le tutoriel de ce package, surremnt en version un petit peu pimpée.
-# Commencer par regarder la communetation des éléments suivants : 
 
-# rAllRisksFactors
-# 
-# rAssetDistribution
-# 
-# rDefaultSpear
-# 
-# rLiquiditySpread
-# 
-# rRealEstate
-# 
-# rShortRate
-# 
-# rStock
-
-# MartingaleTest()
-# 
-# ParamScenarios class
-# ParamsScenarios class(
-#   
-#   
-#   Scenarios class
-# )
-# 
 
 
 ######################## début du TD.
