@@ -167,17 +167,97 @@ BE <- function(ZC = ZC,
   return(df)
 }
 
+# Ok c'est partit plottons plein de trucs !
+par(mfrow=c(3,3))
+# BE(ZC=ZC,
+#    base.horizon = seq(5,30,by=1)) %>% 
+#    {plot(.$base.horizon,
+#          .$BE,
+#          main="BE en fonction de l'horizon du contrat"
+#    )
+#      abline(h=1)}
+BE(ZC=ZC,
+   rt.vol = seq(0,1,length.out=100)) %>% 
+   {plot(.$rt.vol,
+         .$BE,
+         main="BE en fonction de la volatilité du taux court"
+   )
+     abline(h=1)}
+BE(ZC=ZC,
+   rt.k = seq(1,3,length.out=50)) %>% 
+   {plot(.$rt.k,
+         .$BE,
+         main="BE en fonction du k du taux court"
+   )
+     abline(h=1)}
+BE(ZC=ZC,
+   s.vol = seq(0,1,length.out=100)) %>% 
+   {plot(.$s.vol,
+         .$BE,
+         main="BE en fonction de la volatilité du taux court des actions"
+   )
+     abline(h=1)}
+BE(ZC=ZC,
+   s.k = seq(1,3,length.out=50)) %>% 
+   {plot(.$s.k,
+         .$BE,
+         main="BE en fonction du k du taux court des actions"
+   )
+     abline(h=1)}
+BE(ZC=ZC,
+   s.volStock = seq(0,1,length.out=100)) %>% 
+   {plot(.$s.volStock,
+         .$BE,
+         main="BE en fonction de la volatilité des actions"
+   )
+     abline(h=1)}
+BE(ZC=ZC,
+   s.stock0 = seq(10,200,length.out=100)) %>% 
+   {plot(.$s.stock0,
+         .$BE,
+         main="BE en fonction la valeur initiale des actions"
+   )
+     abline(h=1)}
+BE(ZC=ZC,
+   s.rho=seq(0,1,length.out=100)) %>% 
+   {plot(.$s.rho,
+         .$BE,
+         main="BE en fonction du rho des actions"
+   )
+     abline(h=1)}
+BE(ZC=ZC,
+   txConjoncturel=seq(0,1,length.out=100)) %>% 
+   {plot(.$txConjoncturel,
+         .$BE,
+         main="BE en fonction du taux de rachat conjoncturel"
+   )
+     abline(h=1)}
+
 
 BE(ZC=ZC,
-   base.horizon = 5,
-   base.nScenarios = c(10000),
-   rt.vol = .5,
-   rt.k = 2,
-   s.vol = seq(0,1,length.out=100),
-   s.k = 2,
-   s.volStock = .2,
-   s.stock0 = 100,
-   s.rho=.5,
-   txStructurel=0.3,
-   txConjoncturel=0.1) %>% plot(.$s.vol,.$BE,main="BE en fonction de la volatilité des actions"
+   txStructurel=seq(0,1,length.out=100)) %>% 
+   {plot(.$txStructurel,
+         .$BE,
+         main="BE en fonction du taux de rachat structurel"
+   )
+     abline(h=1)}
 
+
+
+# BE(ZC=ZC,
+#    base.horizon = 5,
+#    base.nScenarios = c(10000),
+#    rt.vol = .5,
+#    rt.k = 2,
+#    s.vol = seq(0,1,length.out=100),
+#    s.k = 2,
+#    s.volStock = .2,
+#    s.stock0 = 100,
+#    s.rho=.5,
+#    txStructurel=seq(0,1,length.out=100),
+#    txConjoncturel=0.1) %>% 
+#    {plot(.$s.vol,
+#          .$BE,
+#          main="BE en fonction de la volatilité des actions"
+#    )
+#      abline(h=1)}
