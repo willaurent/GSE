@@ -98,22 +98,86 @@ MartingaleTest(objScenario)
 rez <- calculFlux(objScenario,0.3,0.6)
 BE <- rez %>% {.$flux * .$actu} %>% rowSums
 BE %>% cummean %>% plot(type="l") %>% abline(h=1,col=2)
-
+BE %>% mean
 seuil=0.005
 rev(which((BE %>% cummean <1+seuil)*(BE %>% cummean >1-seuil)==0))[1]
 
 
-get_seuil <- function(seuil=0.005, txStructurel=0.3,txConjoncturel=0.6,...){
-  build_gse(...) %>%
-    calculFlux(txStructurel,txConjoncturel) %>%
-    {.$flux * .$actu} %>%
-    rowSums %>% cummean %>%
-    {rev(which((.<1+seuil)*(.>1-seuil)==0))[1]} %>% 
-    return
+objScenario <- build_gse(ZC = ZC,
+                         base.horizon = 5,
+                         base.nScenarios = 10000,
+                         rt.vol = .1,
+                         rt.k = 2,
+                         s.vol = .1,
+                         s.k = 2,
+                         s.volStock = .2,
+                         s.stock0 = 100,
+                         s.rho=.5)
+MartingaleTest(objScenario)
+BE <- calculFlux(objScenario,0.3,0.6) %>% {.$flux * .$actu} %>% rowSums %>% mean
+
+
+
+
+BE <- function(ZC = ZC,
+               base.horizon = 5,
+               base.nScenarios = 10000,
+               rt.vol = c(.1,.2),
+               rt.k = 2,
+               s.vol = .1,
+               s.k = 2,
+               s.volStock = .2,
+               s.stock0 = 100,
+               s.rho=.5,
+               txStructurel=0.3,
+               txConjoncturel=0.1){
+  df <- expand.grid(base.horizon=base.horizon,
+                    base.nScenarios=base.nScenarios,
+                    rt.vol=rt.vol,
+                    rt.k=rt.k,
+                    s.vol=s.vol,
+                    s.k=s.k,
+                    s.volStock=s.volStock,
+                    s.stock0=s.stock0,
+                    s.rho=s.rho,
+                    txStructurel=txStructurel,
+                    txConjoncturel=txConjoncturel)
+  df$BE <- rep(NULL,nrow(df))
+  for(i in 1:nrow(df)){
+    build_gse(
+      ZC = ZC,
+      base.horizon = df$base.horizon[i],
+      base.nScenarios = df$base.nScenarios[i],
+      rt.vol = df$rt.vol[i],
+      rt.k = df$rt.k[i] ,
+      s.vol = df$s.vol[i],
+      s.k = df$s.k[i],
+      s.volStock = df$s.volStock[i],
+      s.stock0 = df$s.stock0[i],
+      s.rho=df$s.rho[i]
+    ) %>%
+      calculFlux(
+        df$txStructurel[i],
+        df$txConjoncturel[i]
+      ) %>% 
+      {.$flux * .$actu} %>%
+      rowSums %>%
+      mean -> df$BE[i]
+  }
+  return(df)
 }
 
-get_seuil(ZC=ZC,base.nScenarios = 20000)
 
-
-
+BE(ZC=ZC,
+   base.horizon = 5,
+   base.nScenarios = c(10000),
+   rt.vol = .5,
+   rt.k = 2,
+   s.vol = seq(0,1,length.out=100),
+   s.k = 2,
+   s.volStock = .2,
+   s.stock0 = 100,
+   s.rho=.5,
+   txStructurel=0.3,
+   txConjoncturel=0.1) %>% plot(.$s.vol,.$BE,main="BE en fonction de la volatilité des actions"
 
