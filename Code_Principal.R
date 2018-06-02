@@ -5,7 +5,7 @@ charger_pkgs <- function(...){
   if(length(new.pkgs)) install.packages(new.pkgs)
   error <- try(expr = {lapply(pkgs,function(x){library(x,character.only=TRUE)})},silent = FALSE)
 }
-charger_pkgs("magrittr","tidyverse","purrr","ESG")
+charger_pkgs("magrittr","ESG")
 rm(charger_pkgs)
 
 
@@ -65,7 +65,9 @@ MartingaleTest(objScenario)
 
 
 #--------------------------- Fonction de calcul des flux -----------------
-calculFlux <- function(objScenario,txStructurel,txConjoncturel)
+calculFlux <- function(objScenario,
+                       txStructurel,
+                       txConjoncturel)
 {
   #Projection des flux
   PM <- matrix(data=1,nrow=nrow(objScenario@shortRatePaths),ncol=ncol(objScenario@shortRatePaths))
@@ -96,33 +98,4 @@ calculFlux(objScenario,0.3,0.6) %>% {.$flux * .$actu} %>%
   rowSums %>%
   mean %>% {print(paste0("Le Be est égal à ",.))}
 
-
-
-
-Be <- c(seq(1,500,by=1),seq(from=500,to=1000,by=2),seq(from=1000,to=2000,by=10),seq(2000,10000,by=100))
-x= Be
-for(i in 1:length(Be)){
-  rStock(horizon = 15, # Horison de projection.
-         nScenarios = Be[i], # Nombre de scénarii
-         ZC = ZC, # les taux zéro-coupon en inputs
-         vol=0.1, # valatilité du taux court
-         k=2, # k for rates in vasicek models
-         volStock=.2, # volatilité de l'action
-         stock0 = 100, # valeur initiale de l'actoin
-         rho=.5) %$% 
-    calculFlux(shortRatePaths,stockPaths,0.3,0.6)  %>% 
-    {.$flux * .$actu} %>%
-    rowSums %>%
-    quantile(probs=0.995) -> 
-    Be[i] 
-}
-
-# graphe de convergence du BE : 
-plot(x,Be,xlab="Nombre de simulations",ylab="Best estimate empirique")
-data.frame(x=x,y=Be) %>% 
-  ggplot(aes(x,y)) +
-  geom_point()+
-  geom_smooth()+
-  ggtitle("Be empirique en fonction du nombre de simulation")+
-  labs(x = "Nombre de simu", y ="Be empirique")
 
