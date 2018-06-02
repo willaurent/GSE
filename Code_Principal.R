@@ -145,11 +145,11 @@ BE <- function(ZC = ZC,
 objScenario <- build_gse(ZC = ZC,base.nScenarios = 10000)
 MartingaleTest(objScenario)
 rez <- calculFlux(objScenario,0.3,0.6)
-BE <- rez %>% {.$flux * .$actu} %>% rowSums
-BE %>% cummean %>% plot(type="l") %>% abline(h=1,col=2)
-BE %>% mean
+BE2 <- rez %>% {.$flux * .$actu} %>% rowSums
+BE2 %>% cummean %>% plot(type="l") %>% abline(h=1,col=2)
+BE2 %>% mean
 seuil=0.005
-rev(which((BE %>% cummean <1+seuil)*(BE %>% cummean >1-seuil)==0))[1]
+rev(which((BE2 %>% cummean <1+seuil)*(BE %>% cummean >1-seuil)==0))[1]
 
 
 
