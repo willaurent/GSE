@@ -8,9 +8,10 @@ charger_pkgs <- function(...){
 charger_pkgs("magrittr","ESG")
 rm(charger_pkgs)
 
-
 # récupération des zero-coupons : 
 data(ZC)
+ZC <- read.csv2(file="courbe_des_taux.csv")$EUR
+
 
 # Fonction de gse : 
 build_gse <- function(ZC = ZC,
@@ -58,9 +59,6 @@ build_gse <- function(ZC = ZC,
     return
 }
 
-objScenario <- build_gse(ZC = ZC)
-# Test de martingalité :
-MartingaleTest(objScenario)
 
 
 
@@ -92,10 +90,30 @@ calculFlux <- function(objScenario,
   return(list(PM=PM,flux=flux,actu=actu))
 }
 
-calculFlux(objScenario,0.3,0.6)
 
-calculFlux(objScenario,0.3,0.6) %>% {.$flux * .$actu} %>%
-  rowSums %>%
-  mean %>% {print(paste0("Le Be est égal à ",.))}
+
+
+objScenario <- build_gse(ZC = ZC,base.nScenarios = 10000)
+MartingaleTest(objScenario)
+rez <- calculFlux(objScenario,0.3,0.6)
+BE <- rez %>% {.$flux * .$actu} %>% rowSums
+BE %>% cummean %>% plot(type="l") %>% abline(h=1,col=2)
+
+seuil=0.005
+rev(which((BE %>% cummean <1+seuil)*(BE %>% cummean >1-seuil)==0))[1]
+
+
+get_seuil <- function(seuil=0.005, txStructurel=0.3,txConjoncturel=0.6,...){
+  build_gse(...) %>%
+    calculFlux(txStructurel,txConjoncturel) %>%
+    {.$flux * .$actu} %>%
+    rowSums %>% cummean %>%
+    {rev(which((.<1+seuil)*(.>1-seuil)==0))[1]} %>% 
+    return
+}
+
+get_seuil(ZC=ZC,base.nScenarios = 20000)
+
+
 
 
