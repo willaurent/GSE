@@ -63,7 +63,7 @@ build_gse <- function(ZC = ZC,
 
 
 
-#--------------------------- Fonction de calcul des flux -----------------
+
 calculFlux <- function(objScenario,
                        txStructurel,
                        txConjoncturel)
@@ -142,7 +142,6 @@ BE <- function(ZC = ZC,
 
 
 ################################################################ TEMPS DE CONVERGENCE ####
-
 objScenario <- build_gse(ZC = ZC,base.nScenarios = 10000)
 MartingaleTest(objScenario)
 rez <- calculFlux(objScenario,0.3,0.6)
@@ -167,10 +166,6 @@ objScenario <- build_gse(ZC = ZC,
                          s.volStock = .2,
                          s.stock0 = 100,
                          s.rho=.5)
-BE <- calculFlux(objScenario,0.3,0.6) %>% {.$flux * .$actu} %>% rowSums %>% mean
-
-
-
 
 ################################################################ GRAPHIQUES DE SENSIBILITE ####
 par(mfrow=c(3,3))
