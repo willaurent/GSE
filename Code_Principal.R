@@ -6,7 +6,7 @@ charger_pkgs <- function(...){
   if(length(new.pkgs)) install.packages(new.pkgs)
   error <- try(expr = {lapply(pkgs,function(x){library(x,character.only=TRUE)})},silent = FALSE)
 }
-charger_pkgs("magrittr","ESG")
+charger_pkgs("magrittr","dplyr","ESG")
 rm(charger_pkgs)
 
 # récupération des zero-coupons : 
@@ -149,7 +149,7 @@ BE2 <- rez %>% {.$flux * .$actu} %>% rowSums
 BE2 %>% cummean %>% plot(type="l") %>% abline(h=1,col=2)
 BE2 %>% mean
 seuil=0.005
-rev(which((BE2 %>% cummean <1+seuil)*(BE %>% cummean >1-seuil)==0))[1]
+rev(which(((BE2 %>% cummean) <(1+seuil))*((BE2 %>% cummean) > (1-seuil))==0))[1]
 
 
 
