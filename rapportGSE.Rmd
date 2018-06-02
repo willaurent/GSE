@@ -1,15 +1,94 @@
 ---
-title: "Générateur de scénarios économiques"
-author: "LAVERNY, LAURENT, MARJOLLET"
-date: "26 avril 2018"
-output: html_document
+title: "Générateurs de scénarios économiques"
+author: "Mehdi KAIROUN, William LAURENT, Oskar LAVERNY, Pierre MARJOLLET"
+output:
+  word_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+#I. Mise en place du framework
 
-Willaim suce des bites. 
+## Sujet et cadre d'étude
+
+Ce projet de groupe est effectué dans le cadre du cours de *Générateurs de scénarios économiques* - **GSE** dispensé à l'ISFA. La trame que nous allons suivre est la suivante :
+
+* Création d'un GSE "mono indice" risque neutre
+* Calcul de *Best Estimate* - **BE** empirique dans le cadre d'un contrat d'épargne en *Unité de Compte* - **UC**
+* Etude de la sensibilité induite par le calibrage du modèle séléctionné
+
+## Nos outils
+
+Pour mener à bien ce projet, nous alons exploiter le langage open-source **R** muni des librairies suivantes :
+
+* **ESG** - librairie co-produite en 2013 par Frédérique PLANCHET, enseignant et chercheur de l'ISFA. Elle offre une procédure pour valoriser plusieurs produits d'assurance (type épargne, retraite, ...)
+* **RMarkdown** - librairie proposé par les fondateurs de RStudio, Au vue de proposer des rendus PDF de code, elle compile le code écrits et comprends le language *LaTeX*. Le rendu de ce projet a été produit par RMarkdown.
+* **magrittr** - librairie incoutournable. Elle propose de performants opérateurs très utilisés par les utilisateurs de R pour gagner en lisibilité de code
+
+#II. Création d'un GSE mono-indice
+
+## Courbe de taux zéro coupon
+
+### Réglementation
+
+### Méthodologie
+
+### Courbe choisie
+
+## Choix du modèle
+
+modèle implémenté pour le taux d'intérêt : slide 31 : Hull White Vacicek généralisé... On récupère le taux d'intérêt en norminal
+
+Ensuite, on fais BS avec taux d'intérêt stochastique
+
+#III. Analyse et application à un contrat d'épargne en UC
+
+## Définition du contrat
+
+Lors du cours de *Modèles financiers en assurance* donné par M. PLANCHET,nous avons exprimé la valeur théorique du BE d'un contrat d'épargne en UC, avec le cadre suivant:
+
+* Sous-jacent : $(S(t), t\ge0)$
+* Investissement initial $S(0)$
+* Durée du contrat $T$
+* Rachat en $\tau$ permis n'importe quand de fréquence constante
+* Pas de prorogation $(\tau \le T)$ - *A terme, le contrat est rachêté*
+
+On définit $\Lambda \, := \sum\limits_{t=1}^{T}\delta(t)F(t)$ avec:
+
+* $\delta(t) \, := e^{-\int\limits_{0}^{t}r_u\,du}$ le *discount factor*, $(r_u, u\ge0)$ le taux court
+* $F$ les flux représentents les engagements de l'assureur
+
+Ainsi, on calcul le best estimate avec $BE = \mathbb{E}^{\mathbb{P}\times\mathbb{Q}}(\Lambda)$ avec:
+
+* $\mathbb{P}$ la probabilité historique de l'assureur
+* $\mathbb{Q}$ la probabilité risque neutre
+
+
+En indiquant que $\tau$ peut également être le rachat des héritiers au décés de l'assuré, on a $F(t)=S(t) \mathbb{1}_{\tau=t}$. On note que dans le cas général $\mathbb{1}_{\tau=t}$ dépends des probabilités $\mathbb{Q}$ et $\mathbb{P}$ alors
+
+$$BE = \sum\limits_{t=1}^{T}\mathbb{E}^{\mathbb{P}\times\mathbb{Q}}(\delta(t) S(t) \mathbb{1}_{\tau=t})$$
+
+En notant $\mathcal{F}_t$ l'information financière disponnible en $t$. On a alors
+$$BE = \sum\limits_{t=1}^{T}\mathbb{E}^{\mathbb{Q}}(\delta(t) S(t) \mathbb{E}^{\mathbb{P}}(\mathbb{1}_{\tau=t} | \mathcal{F}_t))$$
+
+En notant $q_t := \mathbb{E}^{\mathbb{P}}(\mathbb{1}_{\tau=t} | \mathcal{F}_t)$ la probabilité de rachat, il vient 
+$$BE = \sum\limits_{t=1}^{T}\mathbb{E}^{\mathbb{Q}}(\delta(t) S(t) q_t)$$
+
+Comme les taux de rachat sont constants, le calcul de $q_t$ ne dépends ni de l'information financière, ni de la probabilité historique de l'assureur
+
+$$BE = \sum\limits_{t=1}^{T} q_t\mathbb{E}^{\mathbb{Q}}(\delta(t) S(t))$$
+
+Comme dans le monde risque neutre $(\delta(t)S(t), t \ge 1)$ est une martingale sous $\mathbb{Q}$
+
+$$BE=S(0) \sum\limits_{t=1}^{T} q_t$$
+
+Finalement
+
+$$BE=S(0)$$
+Ainsi, notre BE empirique devrait tendre vers le prix initial de notre actif. **En cours, nous avons également montré que ce résultat reste vrai si les rachats ne sont pas constants**. Ce résultat fondamental va diriger nos études et nous permettre d'être conforté par rapport à nos résultats.
+
+## Tests de sensibilités
 
