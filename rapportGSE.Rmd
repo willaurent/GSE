@@ -1,14 +1,21 @@
 ---
 title: "Générateurs de scénarios économiques"
 author: "Mehdi KAIROUN, William LAURENT, Oskar LAVERNY, Pierre MARJOLLET"
+header-includes:
+  - \usepackage[francais]{babel}
 output:
-  word_document: default
+  pdf_document: default
   html_document: default
+  word_document: default
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
+
+\tableofcontents
+
 
 #I. Mise en place du framework
 
@@ -30,7 +37,7 @@ Pour mener à bien ce projet, nous alons exploiter le langage open-source **R** 
 
 #II. Création d'un GSE mono-indice
 
-## Courbe de taux zéro coupon
+## Courbe de taux zéros coupons
 
 ### Réglementation
 
@@ -46,9 +53,11 @@ Ensuite, on fais BS avec taux d'intérêt stochastique
 
 #III. Analyse et application à un contrat d'épargne en UC
 
-## Définition du contrat
+## Contrat et résultat fondamental
 
-Lors du cours de *Modèles financiers en assurance* donné par M. PLANCHET,nous avons exprimé la valeur théorique du BE d'un contrat d'épargne en UC, avec le cadre suivant:
+### Le contrat d'épargne en UC
+
+Lors du cours de *Modèles financiers en assurance* donné par M. PLANCHET, nous avons exprimé la valeur théorique du BE d'un contrat d'épargne en UC. Posons le cadre :
 
 * Sous-jacent : $(S(t), t\ge0)$
 * Investissement initial $S(0)$
@@ -56,12 +65,14 @@ Lors du cours de *Modèles financiers en assurance* donné par M. PLANCHET,nous 
 * Rachat en $\tau$ permis n'importe quand de fréquence constante
 * Pas de prorogation $(\tau \le T)$ - *A terme, le contrat est rachêté*
 
-On définit $\Lambda \, := \sum\limits_{t=1}^{T}\delta(t)F(t)$ avec:
+On définit $\Lambda \, := \sum\limits_{t=1}^{T}\delta(t)F(t)$, $\Lambda$ la somme des engagements actualisés de l'assureur avec
 
 * $\delta(t) \, := e^{-\int\limits_{0}^{t}r_u\,du}$ le *discount factor*, $(r_u, u\ge0)$ le taux court
 * $F$ les flux représentents les engagements de l'assureur
 
-Ainsi, on calcul le best estimate avec $BE = \mathbb{E}^{\mathbb{P}\times\mathbb{Q}}(\Lambda)$ avec:
+### Valeur du BE dans un contrat d'épargne en UC
+
+On calcul le best estimate avec $BE = \mathbb{E}^{\mathbb{P}\times\mathbb{Q}}(\Lambda)$ avec
 
 * $\mathbb{P}$ la probabilité historique de l'assureur
 * $\mathbb{Q}$ la probabilité risque neutre
@@ -88,7 +99,20 @@ $$BE=S(0) \sum\limits_{t=1}^{T} q_t$$
 Finalement
 
 $$BE=S(0)$$
-Ainsi, notre BE empirique devrait tendre vers le prix initial de notre actif. **En cours, nous avons également montré que ce résultat reste vrai si les rachats ne sont pas constants**. Ce résultat fondamental va diriger nos études et nous permettre d'être conforté par rapport à nos résultats.
+**En cours, nous avons également démontré que ce résultat reste vrai si les rachats ne sont pas constants**. Ce résultat fondamental va diriger nos études et nous permettre d'être conforté dans les valeurs prisent par le BE empirique par monté carlo.
+
+## Calcul du BE empirique
+
+Définissons le BE empirique pour $n$ simulations :
+
+$$\widehat{BE}_n \, := \frac{1}{n}  \sum\limits_{k=1}^{n} \sum\limits_{t=1}^{T} \delta^{(k)}(t)F^{(k)}(t)$$
+
+* $\delta^{(k)}(t)$ la $k^{ième}$ simulation du facteur d'actualisation en $t$
+* $F^{(k)}(t)$ la $k^{ième}$ simulation de l'engagement de l'assureur en $t$
+
+Enfin
+
+$$BE = \lim\limits_{n \rightarrow \infty} \widehat{BE}_n$$
 
 ## Tests de sensibilités
 
