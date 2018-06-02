@@ -1,3 +1,4 @@
+################################################################ MISE EN PLACE DE LENVIRONNEMNET ####
 # chargement des paquets
 charger_pkgs <- function(...){
   pkgs <- as.character(match.call())[-1]
@@ -12,7 +13,7 @@ rm(charger_pkgs)
 data(ZC)
 ZC <- read.csv2(file="courbe_des_taux.csv")$EUR
 
-
+################################################################ FONCTIONS UTILITAIRES ####
 # Fonction de gse : 
 build_gse <- function(ZC = ZC,
                       base.horizon = 5, # horizon de projection 
@@ -91,34 +92,6 @@ calculFlux <- function(objScenario,
 }
 
 
-
-
-objScenario <- build_gse(ZC = ZC,base.nScenarios = 10000)
-MartingaleTest(objScenario)
-rez <- calculFlux(objScenario,0.3,0.6)
-BE <- rez %>% {.$flux * .$actu} %>% rowSums
-BE %>% cummean %>% plot(type="l") %>% abline(h=1,col=2)
-BE %>% mean
-seuil=0.005
-rev(which((BE %>% cummean <1+seuil)*(BE %>% cummean >1-seuil)==0))[1]
-
-
-objScenario <- build_gse(ZC = ZC,
-                         base.horizon = 5,
-                         base.nScenarios = 10000,
-                         rt.vol = .1,
-                         rt.k = 2,
-                         s.vol = .1,
-                         s.k = 2,
-                         s.volStock = .2,
-                         s.stock0 = 100,
-                         s.rho=.5)
-MartingaleTest(objScenario)
-BE <- calculFlux(objScenario,0.3,0.6) %>% {.$flux * .$actu} %>% rowSums %>% mean
-
-
-
-
 BE <- function(ZC = ZC,
                base.horizon = 5,
                base.nScenarios = 10000,
@@ -167,7 +140,39 @@ BE <- function(ZC = ZC,
   return(df)
 }
 
-# Ok c'est partit plottons plein de trucs !
+
+################################################################ TEMPS DE CONVERGENCE ####
+
+objScenario <- build_gse(ZC = ZC,base.nScenarios = 10000)
+MartingaleTest(objScenario)
+rez <- calculFlux(objScenario,0.3,0.6)
+BE <- rez %>% {.$flux * .$actu} %>% rowSums
+BE %>% cummean %>% plot(type="l") %>% abline(h=1,col=2)
+BE %>% mean
+seuil=0.005
+rev(which((BE %>% cummean <1+seuil)*(BE %>% cummean >1-seuil)==0))[1]
+
+
+
+
+################################################################ MARTINGALITE ####
+MartingaleTest(objScenario)
+objScenario <- build_gse(ZC = ZC,
+                         base.horizon = 5,
+                         base.nScenarios = 10000,
+                         rt.vol = .1,
+                         rt.k = 2,
+                         s.vol = .1,
+                         s.k = 2,
+                         s.volStock = .2,
+                         s.stock0 = 100,
+                         s.rho=.5)
+BE <- calculFlux(objScenario,0.3,0.6) %>% {.$flux * .$actu} %>% rowSums %>% mean
+
+
+
+
+################################################################ GRAPHIQUES DE SENSIBILITE ####
 par(mfrow=c(3,3))
 # BE(ZC=ZC,
 #    base.horizon = seq(5,30,by=1)) %>% 
@@ -261,3 +266,7 @@ BE(ZC=ZC,
 #          main="BE en fonction de la volatilité des actions"
 #    )
 #      abline(h=1)}
+
+
+
+################################################################ The END ####
