@@ -237,12 +237,3 @@ data.frame(x=x,y=Be) %>%
   ggtitle("Be empirique en fonction du nombre de simulation")+
   labs(x = "Nombre de simu", y ="Be empirique")
 
-
-
-
-
-# prendre plusieurs Be avc des paam différents..; 
-
-# Autre application projeter sur la durée du lan stratégique orsa les prix d'instruments financiers 
-# mise ne place d'ajustement financiers dans un cadre ORSA
-
