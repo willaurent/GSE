@@ -33,23 +33,73 @@ Pour mener à bien ce projet, nous alons exploiter le langage open-source **R** 
 
 * **ESG** - librairie co-produite en 2013 par Frédérique PLANCHET, enseignant et chercheur de l'ISFA. Elle offre une procédure pour valoriser plusieurs produits d'assurance (type épargne, retraite, ...)
 * **RMarkdown** - librairie proposé par les fondateurs de RStudio, Au vue de proposer des rendus PDF de code, elle compile le code écrits et comprends le language *LaTeX*. Le rendu de ce projet a été produit par RMarkdown.
-* **magrittr** - librairie incoutournable. Elle propose de performants opérateurs très utilisés par les utilisateurs de R pour gagner en lisibilité de code
+* **magrittr** - librairie incoutournable. Elle propose de performants opérateurs très plébiscité par les utilisateurs de R pour gagner en lisibilité de code
 
 #II. Création d'un GSE mono-indice
+
+## Paramètres de la modélisation
+
+Les paramètres que nous avons retenues pour la simulation sont les suivants:
+
+* horizon $T=5$ années 
+* valeure initiale de l'action $S(0)=100$
+* nombre de scénario $n=10\,000$
+
 
 ## Courbe de taux zéros coupons
 
 ### Réglementation
 
+Sous Solvabilité II, le régulateur publie mensuellement des courbes de taux zéro coupons. Ces courbes servent à actualiser les engagements de l'assureur en simulant des prix d'actifs dans le monde risque neutre. Le régulateur indique également que la publication de courbe de taux permets d'harmoniser et d'auditer les calculs des provisions.
+
 ### Méthodologie
+
+Quelques brefs mots sur la méthodologie qu'utilise EIOPA pour dresser une courbe de taux 
 
 ### Courbe choisie
 
+En annexe vous trouverez la courbe gardée___
+
 ## Choix du modèle
 
-modèle implémenté pour le taux d'intérêt : slide 31 : Hull White Vacicek généralisé... On récupère le taux d'intérêt en norminal
+Nous avons profité des modèles déjà implémentés dans la librairie GSE. Nous vous présentons la modélisation retenue ainsi que les paramètres initiaux de la simulation.
 
-Ensuite, on fais BS avec taux d'intérêt stochastique
+Dans la suite, on retiendra les notations suivantes :
+
+* $P(t,T), \forall t \,/\, 1 \le t \le T$, la valeur du zéro coupon actualisé en t
+* $R(t,T) = - \frac{log(P(t,T))}{T-t}$ le taux spot continu en t, d'échéance T
+* $f(t,T) = \lim\limits_{S \leftarrow T_+}F(t; T, S) := - \frac{d\,logP(t,T)}{d\,T}$ le taux forward instantanné en t, d'échéance T.
+* $(r_t = \lim_{T \leftarrow t_+}f(t,T), t \ge 0)$ le taux court en t.
+
+L'unique input de notre modélisation est la courbe de courbe de zéro coupons donnée par le régulateur. Dans la suite de l'exposé, les parmaètres de modélisation ont été séléctionné par dire d'experts.
+
+### Modèle de taux courts
+
+Nous modélisons les taux forward instantanés $f$ par *Heath-Jarrow-Merton* - HJM. On a
+$$df(t,T) = \mu(t,T)dt + \sigma(t,T)dW_t$$
+Ce HJM nous permettra, une fois $f(t,T)$ calculé, de passer à la limite pour enfin déduire le taux court $r_t$.
+
+En $mathématiques financières$ on a vue qu'une unique mesure martingale en absence d'opportunité d'arbitrage induit
+$$\mu(t,T)dt = \sigma(t,T) \int\limits_t^T\sigma(t,s)ds$$
+Le drift étant une fonction de la volatilité, cela nous simplifie le modèle.
+
+Enfin, la structure de volatilité des taux forward est induite par une caractérisation type Hull & White - Vasicek généralisé. On choisit
+$$\sigma(t,T):=\sigma e^{-k(t-T)}$$
+Dans ce projet $k=2$ et $\sigma=0,1$
+
+Nous avons maintenant des valeurs de taux courts et des structures de volatilité des taux forward. Construisons nos actifs sur cette base.
+
+### Modélisation des actifs
+
+On modélise les actions par une formule de Black-Scholes à l'aide du taux court simulé plus haut 
+$$\frac{dS_t}{S_t} = r_tdt + \sigma_{bs}(\rho dW_t^1 + \sqrt{1-\rho ^2}dW_t^2)$$
+Ici $\rho$ représente la corrélation entre l'action et le taux d'intérêt, modélisés par $(W_t)_t^i,i=1,2$, mouvements browniens standard en monde risque-neutre.
+
+Nous avons gardé une corrélation positive $\rho = 0.5$, et la volatilité constante $\sigma_bs = 0.2$
+
+## Test de martingalité
+
+Enfin, pour nous assuré de la cohérence de nos modélisations, nous vérifions que les actifs actualisés issus de notre modélisation sont bien des martingales. On se retrouve 
 
 #III. Analyse et application à un contrat d'épargne en UC
 
@@ -76,7 +126,6 @@ On calcul le best estimate avec $BE = \mathbb{E}^{\mathbb{P}\times\mathbb{Q}}(\L
 
 * $\mathbb{P}$ la probabilité historique de l'assureur
 * $\mathbb{Q}$ la probabilité risque neutre
-
 
 En indiquant que $\tau$ peut également être le rachat des héritiers au décés de l'assuré, on a $F(t)=S(t) \mathbb{1}_{\tau=t}$. On note que dans le cas général $\mathbb{1}_{\tau=t}$ dépends des probabilités $\mathbb{Q}$ et $\mathbb{P}$ alors
 
@@ -113,6 +162,11 @@ $$\widehat{BE}_n \, := \frac{1}{n}  \sum\limits_{k=1}^{n} \sum\limits_{t=1}^{T} 
 Enfin
 
 $$BE = \lim\limits_{n \rightarrow \infty} \widehat{BE}_n$$
-
+## Résultats et temps de convergence
 ## Tests de sensibilités
 
+
+
+
+
+http://www.ressources-actuarielles.net/EXT/ISFA/fp-isfa.nsf/34a14c286dfb0903c1256ffd00502d73/a5e99e9abf5d3674c125772f00600f6c/$FILE/ESG.pdf
