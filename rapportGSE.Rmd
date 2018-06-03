@@ -11,11 +11,17 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+source("fonctions utiles.R")
 ```
 
+\newline
+\newline
+\newline
+\newline
+\newline
 
 \tableofcontents
-
+\newpage
 
 #I. Mise en place du framework
 
@@ -97,9 +103,25 @@ Ici $\rho$ représente la corrélation entre l'action et le taux d'intérêt, mo
 
 Nous avons gardé une corrélation positive $\rho = 0.5$, et la volatilité constante $\sigma_bs = 0.2$
 
-## Test de martingalité
+### Tests de martingalité et consistence du marché
 
-Enfin, pour nous assuré de la cohérence de nos modélisations, nous vérifions que les actifs actualisés issus de notre modélisation sont bien des martingales. On se retrouve 
+Enfin, pour nous assuré de la cohérence de nos modélisations, nous vérifions que les actifs actualisés issus de notre modélisation sont bien des martingales. Pour ça, nous vérifions tout simplement qu'à chaque horizon t fixé, nous avons bien que l'actif actualisé en 0 est égale à sa valeur en 0.
+
+```{r, echo = F}
+objScenario <- build_gse(ZC = ZC,base.nScenarios = 10000)
+mymtgtest(objScenario
+          , main = "Test de martingalité des actifs simulés"
+          , xlab = "Horizon"
+          , ylab = "Moyenne"
+          , sub = "Les valeurs obtenues sont divisé par S(0)"
+          )
+
+```
+Le test de martingalité est plutôt satisfaisant. Le ratio $\frac{S(t)}{P(0,t)} \frac{1}{S(0)}$ est très proche de $1$.
+
+Pour ce qui est de la consistence de marché, nous ne sommes ici pas en mesure de la valdider. En effet, le seul paramètre d'entrée de nos modèles est la courbe de taux de l'EIOPA. Nous n'avons aucune base de comparaison que nous exploitons ici en guise de référence du marché. Ainsi, on arrive toujours à affirmer que la consistence de marché avec l'EIOPA est validée sous réserve que le code est bien écrit. 
+
+Nous reviendrons plus tard sur la qualibration du modèle de taux court et l'impacte sur la consistence avec le marché.
 
 #III. Analyse et application à un contrat d'épargne en UC
 
@@ -163,8 +185,12 @@ Enfin
 
 $$BE = \lim\limits_{n \rightarrow \infty} \widehat{BE}_n$$
 ## Résultats et temps de convergence
-## Tests de sensibilités
 
+
+
+## Sensibilités
+
+Ainsi, nous avons caculé les sensibilités du BE
 
 
 
