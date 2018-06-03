@@ -3,6 +3,7 @@ title: "Générateurs de scénarios économiques"
 author: "Mehdi KAIROUN, William LAURENT, Oskar LAVERNY, Pierre MARJOLLET"
 header-includes:
   - \usepackage[francais]{babel}
+  - \usepackage{xcolor}
 output:
   pdf_document: default
   html_document: default
@@ -14,20 +15,19 @@ knitr::opts_chunk$set(echo = TRUE)
 source("fonctions utiles.R")
 ```
 
-\newline
-\newline
-\newline
-\newline
-\newline
-
 \tableofcontents
 \newpage
-
-#I. Mise en place du framework
+ \newcommand{\pilou}[1]{\textcolor{red}{#1}}
+ 
+ 
+# I. Mise en place du framework
 
 ## Sujet et cadre d'étude
 
-Ce projet de groupe est effectué dans le cadre du cours de *Générateurs de scénarios économiques* - **GSE** dispensé à l'ISFA. La trame que nous allons suivre est la suivante :
+\pilou{Ce rapport présente le travail effectué dans le cadre [blabla], ayant pour objet la modélisation [blablabla]. Le rapport suivra la trame de réflexion et de construction du code, qui est la suivante [blabla]}
+
+Ce projet de groupe est effectué dans le cadre
+du cours de *Générateurs de scénarios économiques* - **GSE** dispensé à l'ISFA. La trame que nous allons suivre est la suivante :
 
 * Création d'un GSE "mono indice" risque neutre
 * Calcul de *Best Estimate* - **BE** empirique dans le cadre d'un contrat d'épargne en *Unité de Compte* - **UC**
@@ -39,9 +39,9 @@ Pour mener à bien ce projet, nous alons exploiter le langage open-source **R** 
 
 * **ESG** - librairie co-produite en 2013 par Frédérique PLANCHET, enseignant et chercheur de l'ISFA. Elle offre une procédure pour valoriser plusieurs produits d'assurance (type épargne, retraite, ...)
 * **RMarkdown** - librairie proposé par les fondateurs de RStudio, Au vue de proposer des rendus PDF de code, elle compile le code écrits et comprends le language *LaTeX*. Le rendu de ce projet a été produit par RMarkdown.
-* **magrittr** - librairie incoutournable. Elle propose de performants opérateurs très plébiscité par les utilisateurs de R pour gagner en lisibilité de code
+* **magrittr** - librairie \pilou{standard proposant} de performants opérateurs, plébiscité par les utilisateurs de R, \pilou{permettant un énorme gain en lisibilité et concision du code.}
 
-#II. Création d'un GSE mono-indice
+# II. Création d'un GSE mono-indice
 
 ## Paramètres de la modélisation
 
@@ -50,6 +50,8 @@ Les paramètres que nous avons retenues pour la simulation sont les suivants:
 * horizon $T=5$ années 
 * valeure initiale de l'action $S(0)=100$
 * nombre de scénario $n=10\,000$
+
+\pilou{Ces hyphothèses sont peu significaives dans la construction du BE, du moins à l'ordre 1, de part le contrat que nous choisissons de tarifer. Plus de détail sur ce point est disponible [nom de la section ou il y a les calculs pour BE = S0]}
 
 
 ## Courbe de taux zéros coupons
@@ -62,22 +64,24 @@ Sous Solvabilité II, le régulateur publie mensuellement des courbes de taux z�
 
 Quelques brefs mots sur la méthodologie qu'utilise EIOPA pour dresser une courbe de taux 
 
+\pilou{La croube des taux fournie par l'EIOPA est construite sur la base des taux observés sur le marché, *tant que ceux-ci sont liquides*, c'est a dire jusqu'a un *Last Liquid point* fixé a 20ans. Au dela, la courbe est extrapoler via la méthodologie de Smith-wilson, qui nécéssite un *Ultimate forward rate* comme paramètre d'entrée, fixé par EIOPA.}
+
 ### Courbe choisie
 
-En annexe vous trouverez la courbe gardée___
+\pilou{Nous aovns choisis d'utiliser la courbe fournie par l'EIOPA, sans volatility adjustement, sans chocs. Cette corube est isponible a l'annexe [laquelle?]}
 
 ## Choix du modèle
 
-Nous avons profité des modèles déjà implémentés dans la librairie GSE. Nous vous présentons la modélisation retenue ainsi que les paramètres initiaux de la simulation.
+\pilou{Pour plus de simplicité de mise en oeuvre, nous avons choisis d'utiliser les modèles déjà implémentés dans la librairie GSE}. Nous \pilou{présentons dans cette section} la modélisation retenue ainsi que les paramètres initiaux de la simulation que nous avons ensuite effectué.
 
-Dans la suite, on retiendra les notations suivantes :
+\pilou{Tout d'abord, les qualques notations suivantes seront utilisées par la suite : }
 
-* $P(t,T), \forall t \,/\, 1 \le t \le T$, la valeur du zéro coupon actualisé en t
+* $P(t,T), \forall t \,|\, 1 \le t \le T$, la valeur du zéro coupon actualisé en t
 * $R(t,T) = - \frac{log(P(t,T))}{T-t}$ le taux spot continu en t, d'échéance T
 * $f(t,T) = \lim\limits_{S \leftarrow T_+}F(t; T, S) := - \frac{d\,logP(t,T)}{d\,T}$ le taux forward instantanné en t, d'échéance T.
-* $(r_t = \lim_{T \leftarrow t_+}f(t,T), t \ge 0)$ le taux court en t.
+* $(r_t = \lim\limits_{T \leftarrow t_+}f(t,T), t \ge 0)$ le taux court en t.
 
-L'unique input de notre modélisation est la courbe de courbe de zéro coupons donnée par le régulateur. Dans la suite de l'exposé, les parmaètres de modélisation ont été séléctionné par dire d'experts.
+L'unique input de notre modélisation est la courbe de courbe de zéro coupons donnée par le régulateur. \pilou{L'ensemble des autres paramèters, notamment ceux qui nous analisons dans la partie sensibilité, ont été choisis a dire d'expert, ou fixé dans des plages.}. Enfin, l'ensemble des paramètres non-fixé se déduisent facielment de la courbe des zéro-coupons.}
 
 ### Modèle de taux courts
 
@@ -85,27 +89,27 @@ Nous modélisons les taux forward instantanés $f$ par *Heath-Jarrow-Merton* - H
 $$df(t,T) = \mu(t,T)dt + \sigma(t,T)dW_t$$
 Ce HJM nous permettra, une fois $f(t,T)$ calculé, de passer à la limite pour enfin déduire le taux court $r_t$.
 
-En $mathématiques financières$ on a vue qu'une unique mesure martingale en absence d'opportunité d'arbitrage induit
+En \pilou{pas en italique, ou alors "cours" devant}$mathématiques financières$ on a vue qu'une unique mesure martingale en absence d'opportunité d'arbitrage induit
 $$\mu(t,T)dt = \sigma(t,T) \int\limits_t^T\sigma(t,s)ds$$
 Le drift étant une fonction de la volatilité, cela nous simplifie le modèle.
 
-Enfin, la structure de volatilité des taux forward est induite par une caractérisation type Hull & White - Vasicek généralisé. On choisit
+Enfin, la structure de volatilité des taux forward est \pilou{choisie comme étant} induite par une caractérisation type Hull & White - Vasicek généralisé. On choisit
 $$\sigma(t,T):=\sigma e^{-k(t-T)}$$
-Dans ce projet $k=2$ et $\sigma=0,1$
+Dans ce projet $k=2$ et $\sigma=0,1$ \pilou{par défaut.}
 
-Nous avons maintenant des valeurs de taux courts et des structures de volatilité des taux forward. Construisons nos actifs sur cette base.
+Nous avons maintenant des valeurs de taux courts et des structures de volatilité des taux forward. \pilou{La section suivant détaille la construction d'un modèle d'actif sur cette base.}
 
 ### Modélisation des actifs
 
-On modélise les actions par une formule de Black-Scholes à l'aide du taux court simulé plus haut 
+On modélise les actions par une formule de Black-Scholes \pilou{comportant un drift non-constant suivant un modèle de vasicek généralisé -- différent du taux court :}
 $$\frac{dS_t}{S_t} = r_tdt + \sigma_{bs}(\rho dW_t^1 + \sqrt{1-\rho ^2}dW_t^2)$$
-Ici $\rho$ représente la corrélation entre l'action et le taux d'intérêt, modélisés par $(W_t)_t^i,i=1,2$, mouvements browniens standard en monde risque-neutre.
+Ici $\rho$ représente la corrélation entre l'action et le taux d'intérêt simulé, modélisés par $(W_t)_t^i,i=1,2$, mouvements browniens standard en monde risque-neutre.
 
-Nous avons gardé une corrélation positive $\rho = 0.5$, et la volatilité constante $\sigma_bs = 0.2$
+Nous avons gardé une corrélation positive $\rho = 0.5$, et la volatilité constante $\sigma_bs = 0.2$ \pilou{par défaut}.
 
 ### Tests de martingalité et consistence du marché
 
-Enfin, pour nous assuré de la cohérence de nos modélisations, nous vérifions que les actifs actualisés issus de notre modélisation sont bien des martingales. Pour ça, nous vérifions tout simplement qu'à chaque horizon t fixé, nous avons bien que l'actif actualisé en 0 est égale à sa valeur en 0.
+Enfin, pour nous assuré de la cohérence de nos modélisations, nous vérifions que les actifs actualisés issus de notre modélisation sont bien des martingales. Pour ça, nous vérifions tout simplement qu'à chaque horizon t fixé, l'actif actualisé en 0 est égale à sa valeur en 0.
 
 ```{r, echo = F}
 objScenario <- build_gse(ZC = ZC,base.nScenarios = 10000)
@@ -119,17 +123,17 @@ mymtgtest(objScenario
 ```
 Le test de martingalité est plutôt satisfaisant. Le ratio $\frac{S(t)}{P(0,t)} \frac{1}{S(0)}$ est très proche de $1$.
 
-Pour ce qui est de la consistence de marché, nous ne sommes ici pas en mesure de la valdider. En effet, le seul paramètre d'entrée de nos modèles est la courbe de taux de l'EIOPA. Nous n'avons aucune base de comparaison que nous exploitons ici en guise de référence du marché. Ainsi, on arrive toujours à affirmer que la consistence de marché avec l'EIOPA est validée sous réserve que le code est bien écrit. 
+Pour ce qui est de la consistence de marché \pilou{, ou *market-consistency* }, une vérification serais ici inutile. En effet, le seul paramètre d'entrée de nos modèles est la courbe de taux de l'EIOPA, et nous n'avons aucune base de comparaison \pilou{exploité} ici en guise de référence du marché. \pilou{Ainsi, pour peu que les fonctions que nous utilisons soient codées correctement, ce qui est a priorit le cas, la consistence de marché est *de facto* présente.}
 
-Nous reviendrons plus tard sur la qualibration du modèle de taux court et l'impacte sur la consistence avec le marché.
+Nous reviendrons plus tard sur la \pilou{c}alibration du modèle de taux court et l'impacte sur la consistence avec le marché.
 
-#III. Analyse et application à un contrat d'épargne en UC
+# III. Analyse et application à un contrat d'épargne en UC
 
 ## Contrat et résultat fondamental
 
 ### Le contrat d'épargne en UC
 
-Lors du cours de *Modèles financiers en assurance* donné par M. PLANCHET, nous avons exprimé la valeur théorique du BE d'un contrat d'épargne en UC. Posons le cadre :
+Lors du cours de *Modèles financiers en assurance* donné par M. PLANCHET, nous avons exprimé la valeur théorique du BE d'un contrat d'épargne en UC. \pilou{Affin de bien définir le cadre de ce contrat, nous nous proposons d'utiliser les notations suivantes :}
 
 * Sous-jacent : $(S(t), t\ge0)$
 * Investissement initial $S(0)$
@@ -170,7 +174,7 @@ $$BE=S(0) \sum\limits_{t=1}^{T} q_t$$
 Finalement
 
 $$BE=S(0)$$
-**En cours, nous avons également démontré que ce résultat reste vrai si les rachats ne sont pas constants**. Ce résultat fondamental va diriger nos études et nous permettre d'être conforté dans les valeurs prisent par le BE empirique par monté carlo.
+**En cours, nous avons également démontré que ce résultat reste vrai si les rachats ne sont pas constants, qu'ils soient indépendant ou non de la probabilité rattaché aux risques financiers.**. Ce résultat fondamental va diriger nos études et nous permettre d'être conforté dans les valeurs prisent par le BE empirique par monté carlo. \pilou{Le point central de cette étude sera alors de vérifier ce fait, et de confirmer que le *best-estimate* de ce contrat est bien de 1.}
 
 ## Calcul du BE empirique
 
@@ -184,6 +188,7 @@ $$\widehat{BE}_n \, := \frac{1}{n}  \sum\limits_{k=1}^{n} \sum\limits_{t=1}^{T} 
 Enfin
 
 $$BE = \lim\limits_{n \rightarrow \infty} \widehat{BE}_n$$
+
 ## Résultats et temps de convergence
 
 
@@ -191,8 +196,12 @@ $$BE = \lim\limits_{n \rightarrow \infty} \widehat{BE}_n$$
 ## Sensibilités
 
 Ainsi, nous avons caculé les sensibilités du BE
+Les sensibilitées des différents BE sont disponibles 
 
+
+\pilou{Les graphiques ? J'ai bien la dernière version la ???}
 
 
 
 http://www.ressources-actuarielles.net/EXT/ISFA/fp-isfa.nsf/34a14c286dfb0903c1256ffd00502d73/a5e99e9abf5d3674c125772f00600f6c/$FILE/ESG.pdf
+
