@@ -332,7 +332,7 @@ BE(ZC=ZC,
 
 Conformément à nos attentes, les BE convergent bien vers le prix de l'actif en $0$ comme démontré plus haut. De plus, la plus part des paramètre n'influent que peu sur la vitesse de convergence. Le résultat théorique de convergence du BE vers $S(0)$ est donc clairement confirmé par les simulations.
 
-#IV. Conclusion et références
+# IV. Conclusion et références
 
 Conformément à la démontration proposée en partie III, le BE reste stable malgré la perturbation de chaque paramètre de notre modèle. Une étude intéressante à mener sera la sensibilité de la vitesse de convergence aux variations des différents paramètres. Mathématiquement, le BE est une espérance (ordre 1). Ainsi nous le calculons avec une approche "juste", que l'on peut caractériser de "prudente" par la courbe de taux fournie par EIOPA. La faible conplexité du cadre posé permet de tirer des résultats théoriques intéressants et de les confirmer par la simulation, mais il est évident qu'une aplication pratique ne serais pas aussi triviale.
 
