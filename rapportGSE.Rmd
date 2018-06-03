@@ -17,7 +17,7 @@ source("fonctions utiles.R")
 \tableofcontents
 \newpage
 
-#I. Mise en place du framework
+# I. Mise en place du framework
 
 ## Sujet et cadre d'étude
 
@@ -35,7 +35,7 @@ Pour mener à bien ce projet, nous allons exploiter le langage open-source **R**
 * **RMarkdown** - librairie proposée par les fondateurs de RStudio, dans le but de produire des rendus PDF de code. Elle compile le code R et comprend le language *LaTeX*.
 * **magrittr** - librairie incoutournable. Elle propose de performants opérateurs très plébiscités par les utilisateurs de R pour gagner en lisibilité de code
 
-#II. Création d'un GSE mono-indice
+# II. Création d'un GSE mono-indice
 
 ## Paramètres de la modélisation
 
@@ -62,20 +62,20 @@ Nous aovns choisi d'utiliser la courbe fournie par l'EIOPA, sans ajustement de v
 
 ## Choix du modèle
 
-Pour plus de simplicité de mise en oeuvre, nous avons choisi d'utiliser les modèles déjà implémentés dans la librairie GSE. Nous vous présentons la modélisation retenue ainsi que les paramètres initiaux de nos simulations.
+Pour plus de simplicité de mise en oeuvre, nous avons choisi d'utiliser les modèles déjà implémentés dans la librairie GSE. Nous présentons dans cette partie la modélisation retenue ainsi que les paramètres initiaux de nos simulations.
 
 Dans la suite, on retiendra les notations suivantes :
 
-* $P(t,T), \forall t \,/\, 1 \le t \le T$, la valeur du zéro coupon actualisée en t
+* $P(t,T), \forall t \,|\, 1 \le t \le T$, la valeur du zéro coupon actualisée en t
 * $R(t,T) = - \frac{log(P(t,T))}{T-t}$ le taux spot continu en t, d'échéance T
 * $f(t,T) = \lim\limits_{S \leftarrow T_+}F(t; T, S) := - \frac{d\,logP(t,T)}{d\,T}$ le taux forward instantanné en t, d'échéance T.
 * $(r_t = \lim_{T \leftarrow t_+}f(t,T), t \ge 0)$ le taux court en t.
 
-L'unique input de notre modélisation est la courbe de zéro coupons publiée par le régulateur. L'ensemble des autres paramètres, notamment ceux analysés ans la partie portant sur les calculs de sensibilité, ont été choisis à dire d'expert, ou fixés dans des plages. Enfin, l'ensemble des paramètres non-fixés se déduit facielment de la courbe des zéro-coupons.
+L'unique input de notre modélisation est la courbe de zéro coupons publiée par le régulateur. L'ensemble des autres paramètres, notamment ceux analysés dans la partie portant sur les calculs de sensibilité, ont été choisis à dire d'expert, ou fixés dans des plages. Enfin, l'ensemble des paramètres non-fixés se déduit facielment de la courbe des zéro-coupons.
 
 ### Modèle de taux courts
 
-Nous modélisons les taux forward instantanés $f$ par *Heath-Jarrow-Merton* - HJM. On a
+Nous modélisons les taux forward instantanés $f$ par *Heath-Jarrow-Merton - HJM*. On a
 $$df(t,T) = \mu(t,T)dt + \sigma(t,T)dW_t$$
 Ce modèle HJM nous permettra, une fois $f(t,T)$ calibré, de produire les taux courts $r_t$.
 
@@ -117,7 +117,7 @@ Pour ce qui est de la consistence de marché (**market consistency**), nous ne s
 
 Nous reviendrons plus tard sur la calibration du modèle de taux court et l'influence sur la consistence avec le marché.
 
-#III. Analyse et application à un contrat d'épargne en UC
+# III. Analyse et application à un contrat d'épargne en UC
 
 ## Contrat et résultat fondamental
 
@@ -284,7 +284,7 @@ BE(ZC=ZC,
 
 ```
 
-Il est cohérent que la vitesse de convergence soit croissante avec la volatilié. Pousser le nombre de simulations suffirait à corriger cet effet
+Il est cohérent que la vitesse de convergence soit décroissante avec la volatilié. Pousser le nombre de simulations suffirait à corriger cet effet, dans un cas de volatilité (implicite ou explicite) plus grande que prévue.
 
 ```{r sensi_4, echo = FALSE, fig.height= 3}
 
@@ -330,11 +330,11 @@ BE(ZC=ZC,
 
 ```
 
-Conformément à nos attentes, les BE convergent bien vers le prix de l'actif en $0$ comme démontré plus haut.
+Conformément à nos attentes, les BE convergent bien vers le prix de l'actif en $0$ comme démontré plus haut. De plus, la plus part des paramètre n'influent que peu sur la vitesse de convergence. Le résultat théorique de convergence du BE vers $S(0)$ est donc clairement confirmé par les simulations.
 
 #IV. Conclusion et références
 
-Conformément à la démontration proposée en partie III, le BE reste stable malgré la perturbation de chaque paramètre de notre modèle. Une étude intéressante à mener sera la sensibilité de la vitesse de convergence aux variations des différents paramètres. Mathématiquement, le BE est une espérance (ordre 1). Ainsi nous le calculons avec une approche "juste", que l'on peut caractériser de "prudente" par la courbe de taux fournie par EIOPA. Maintenant, le cadre posé est restreint, et ça, c'est naze. 
+Conformément à la démontration proposée en partie III, le BE reste stable malgré la perturbation de chaque paramètre de notre modèle. Une étude intéressante à mener sera la sensibilité de la vitesse de convergence aux variations des différents paramètres. Mathématiquement, le BE est une espérance (ordre 1). Ainsi nous le calculons avec une approche "juste", que l'on peut caractériser de "prudente" par la courbe de taux fournie par EIOPA. La faible conplexité du cadre posé permet de tirer des résultats théoriques intéressants et de les confirmer par la simulation, mais il est évident qu'une aplication pratique ne serais pas aussi triviale.
 
 *Références* :
 
