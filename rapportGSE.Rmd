@@ -29,28 +29,28 @@ Ce projet de groupe est effectué dans le cadre du cours de *Générateurs de sc
 
 ## Nos outils
 
-Pour mener à bien ce projet, nous alons exploiter le langage open-source **R** muni des librairies suivantes :
+Pour mener à bien ce projet, nous allons exploiter le langage open-source **R** muni des librairies suivantes :
 
-* **ESG** - librairie co-produite en 2013 par Frédérique PLANCHET, enseignant et chercheur de l'ISFA. Elle offre une procédure pour valoriser plusieurs produits d'assurance (type épargne, retraite, ...)
-* **RMarkdown** - librairie proposé par les fondateurs de RStudio, Au vue de proposer des rendus PDF de code, elle compile le code écrits et comprends le language *LaTeX*. Le rendu de ce projet a été produit par RMarkdown.
-* **magrittr** - librairie incoutournable. Elle propose de performants opérateurs très plébiscité par les utilisateurs de R pour gagner en lisibilité de code
+* **ESG** - librairie co-produite en 2013 par Frédérique PLANCHET, enseignant chercheur de l'ISFA. Elle offre une procédure pour valoriser plusieurs produits d'assurance (type épargne, retraite, ...)
+* **RMarkdown** - librairie proposée par les fondateurs de RStudio, dans le but de produire des rendus PDF de code. Elle compile le code R et comprend le language *LaTeX*.
+* **magrittr** - librairie incoutournable. Elle propose de performants opérateurs très plébiscités par les utilisateurs de R pour gagner en lisibilité de code
 
 #II. Création d'un GSE mono-indice
 
 ## Paramètres de la modélisation
 
-Les paramètres que nous avons retenues pour la simulation sont les suivants:
+Les paramètres que nous avons retenus pour la simulation sont les suivants:
 
 * horizon $T=5$ années 
 * valeure initiale de l'action $S(0)=100$
-* nombre de scénario $n=10\,000$
+* nombre de scénarios $n=10\,000$
 
 
 ## Courbe de taux zéros coupons
 
 ### Réglementation
 
-Sous Solvabilité II, le régulateur publie mensuellement des courbes de taux zéro coupons. Ces courbes servent à actualiser les engagements de l'assureur en simulant des prix d'actifs dans le monde risque neutre. Le régulateur indique également que la publication de courbe de taux permets d'harmoniser et d'auditer les calculs des provisions.
+Sous Solvabilité II, le régulateur publie mensuellement des courbes de taux zéro coupons. Ces courbes servent à actualiser les engagements de l'assureur en simulant des prix d'actifs dans le monde risque neutre. Le régulateur indique également que la publication de courbes de taux permet d'harmoniser et d'auditer les calculs des provisions.
 
 ### Méthodologie
 
@@ -58,26 +58,26 @@ La croube des taux fournie par l'EIOPA est construite sur la base des taux obser
 
 ### Courbe choisie
 
-Nous aovns choisis d'utiliser la courbe fournie par l'EIOPA, sans volatility adjustement, sans chocs.
+Nous aovns choisi d'utiliser la courbe fournie par l'EIOPA, sans ajustement de volatilité, sans chocs.
 
 ## Choix du modèle
 
-Pour plus de simplicité de mise en oeuvre, nous avons choisis d'utiliser les modèles déjà implémentés dans la librairie GSE. Nous vous présentons la modélisation retenue ainsi que les paramètres initiaux de nos simulations.
+Pour plus de simplicité de mise en oeuvre, nous avons choisi d'utiliser les modèles déjà implémentés dans la librairie GSE. Nous vous présentons la modélisation retenue ainsi que les paramètres initiaux de nos simulations.
 
 Dans la suite, on retiendra les notations suivantes :
 
-* $P(t,T), \forall t \,/\, 1 \le t \le T$, la valeur du zéro coupon actualisé en t
+* $P(t,T), \forall t \,/\, 1 \le t \le T$, la valeur du zéro coupon actualisée en t
 * $R(t,T) = - \frac{log(P(t,T))}{T-t}$ le taux spot continu en t, d'échéance T
 * $f(t,T) = \lim\limits_{S \leftarrow T_+}F(t; T, S) := - \frac{d\,logP(t,T)}{d\,T}$ le taux forward instantanné en t, d'échéance T.
 * $(r_t = \lim_{T \leftarrow t_+}f(t,T), t \ge 0)$ le taux court en t.
 
-L'unique input de notre modélisation est la courbe de courbe de zéro coupons donnée par le régulateur. L'ensemble des autres paramèters, notamment ceux qui nous analisons dans la partie sensibilité, ont été choisis a dire d'expert, ou fixé dans des plages. Enfin, l'ensemble des paramètres non-fixé se déduisent facielment de la courbe des zéro-coupons.
+L'unique input de notre modélisation est la courbe de zéro coupons publiée par le régulateur. L'ensemble des autres paramètres, notamment ceux analysés ans la partie portant sur les calculs de sensibilité, ont été choisis à dire d'expert, ou fixés dans des plages. Enfin, l'ensemble des paramètres non-fixés se déduit facielment de la courbe des zéro-coupons.
 
 ### Modèle de taux courts
 
 Nous modélisons les taux forward instantanés $f$ par *Heath-Jarrow-Merton* - HJM. On a
 $$df(t,T) = \mu(t,T)dt + \sigma(t,T)dW_t$$
-Ce HJM nous permettra, une fois $f(t,T)$ calculé, de passer à la limite pour enfin déduire le taux court $r_t$.
+Ce modèle HJM nous permettra, une fois $f(t,T)$ calibré, de produire les taux courts $r_t$.
 
 En cours de $mathématiques financières$ on a vue qu'une unique mesure martingale en absence d'opportunité d'arbitrage induit
 $$\mu(t,T)dt = \sigma(t,T) \int\limits_t^T\sigma(t,s)ds$$
@@ -87,19 +87,19 @@ Enfin, la structure de volatilité des taux forward est choisie comme étant ind
 $$\sigma(t,T):=\sigma e^{-k(t-T)}$$
 On prendra $k=2$ et $\sigma=0,1$ par défaut.
 
-Nous avons maintenant des valeurs de taux courts et des structures de volatilité des taux forward. La section suivant détaille la construction d'un modèle d'actif sur cette base.
+Nous avons maintenant des valeurs de taux courts et des structures de volatilité des taux forward. La section suivante détaille la construction d'un modèle d'actif sur cette base.
 
 ### Modélisation des actifs
 
-On modélise les actions par une formule de Black-Scholes comportant un drift non-constant suivant un modèle de vasicek généralisé - différent du taux court précédent:
+On modélise les actions par le modèle de Black-Scholes comportant un drift non-constant suivant un modèle de vasicek généralisé - différent du taux court précédent:
 $$\frac{dS_t}{S_t} = r_tdt + \sigma_{bs}(\rho dW_t^1 + \sqrt{1-\rho ^2}dW_t^2)$$
-Ici $\rho$ représente la corrélation entre l'action et le taux d'intérêt, modélisés par $(W_t)_t^i,i=1,2$, mouvements browniens standard en monde risque-neutre.
+Ici $\rho$ représente la corrélation entre l'action et le taux d'intérêt, modélisée par $(W_t)_t^i,i=1,2$, mouvements browniens standard en monde risque-neutre.
 
 Nous avons, par défaut, gardé une corrélation positive $\rho = 0.5$, et la volatilité constante $\sigma_bs = 0.2$ 
 
 ### Tests de martingalité et consistence du marché
 
-Enfin, pour nous assuré de la cohérence de nos modélisations, nous vérifions que les actifs actualisés issus de notre modélisation sont bien des martingales. Pour ça, nous vérifions tout simplement qu'à chaque horizon t fixé, nous avons bien que l'actif actualisé en 0 est égale à sa valeur en 0.
+Enfin, pour nous assuré de la cohérence de nos modélisations, nous vérifions que les actifs actualisés issus de notre modélisation sont bien des martingales. Pour ça, nous vérifions tout simplement qu'à chaque horizon t fixé, nous avons bien que l'actif actualisé en 0 est égal à sa valeur en 0.
 
 ```{r, echo = F}
 objScenario <- build_gse(ZC = ZC,base.nScenarios = 10000)
@@ -107,15 +107,15 @@ mymtgtest(objScenario
           , main = "Test de martingalité des actifs simulés"
           , xlab = "Horizon"
           , ylab = "Moyenne"
-          , sub = "Les valeurs obtenues sont divisé par S(0)"
+          , sub = "Les valeurs obtenues sont divisées par S(0)"
           )
 
 ```
 Le test de martingalité est plutôt satisfaisant. Le ratio $\frac{S(t)}{P(0,t)} \frac{1}{S(0)}$ est très proche de $1$.
 
-Pour ce qui est de la consistence de marché (**market consistency**), nous ne sommes ici pas en mesure de la valdider. En effet, le seul paramètre d'entrée de nos modèles est la courbe de taux de l'EIOPA. Nous n'avons aucune base de comparaison que nous exploités ici en guise de référence du marché. Ainsi, pour peu que les fonctions que nous utilisons soient codées correctement, ce qui est a priorit le cas, la consistence de marché est *de facto* présente. 
+Pour ce qui est de la consistence de marché (**market consistency**), nous ne sommes ici pas en mesure de la valdider. En effet, le seul paramètre d'entrée de nos modèles est la courbe de taux de l'EIOPA. Nous n'avons aucune base de comparaison que nous pourrions exploiter ici en guise de référence du marché. Ainsi, pour peu que les fonctions que nous utilisons soient codées correctement, ce qui est a priori le cas, la consistence de marché est *de facto* vérifiée.
 
-Nous reviendrons plus tard sur la qualibration du modèle de taux court et l'impacte sur la consistence avec le marché.
+Nous reviendrons plus tard sur la calibration du modèle de taux court et l'influence sur la consistence avec le marché.
 
 #III. Analyse et application à un contrat d'épargne en UC
 
@@ -123,7 +123,7 @@ Nous reviendrons plus tard sur la qualibration du modèle de taux court et l'imp
 
 ### Le contrat d'épargne en UC
 
-Lors du cours de *Modèles financiers en assurance* donné par M. PLANCHET, nous avons exprimé la valeur théorique du BE d'un contrat d'épargne en UC. Affin de bien définir le cadre de ce contrat, nous nous proposons d'utiliser les notations suivantes :
+Lors du cours de *Modèles financiers en assurance* donné par M. PLANCHET, nous avons exprimé la valeur théorique du BE d'un contrat d'épargne en UC. Afin de bien définir le cadre de ce contrat, nous nous proposons d'utiliser les notations suivantes :
 
 * Sous-jacent : $(S(t), t\ge0)$
 * Investissement initial $S(0)$
@@ -131,29 +131,29 @@ Lors du cours de *Modèles financiers en assurance* donné par M. PLANCHET, nous
 * Rachat en $\tau$ permis n'importe quand de fréquence constante
 * Pas de prorogation $(\tau \le T)$ - *A terme, le contrat est rachêté*
 
-On définit $\Lambda \, := \sum\limits_{t=1}^{T}\delta(t)F(t)$, $\Lambda$ la somme des engagements actualisés de l'assureur avec
+On définit $\Lambda \, := \sum\limits_{t=1}^{T}\delta(t)F(t)$, $\Lambda$ la somme des engagements actualisés de l'assureur par
 
 * $\delta(t) \, := e^{-\int\limits_{0}^{t}r_u\,du}$ le *discount factor*, $(r_u, u\ge0)$ le taux court
-* $F$ les flux représentents les engagements de l'assureur
+* $F$ les flux représentant les engagements de l'assureur
 
 ### Valeur du BE dans un contrat d'épargne en UC
 
-On calcul le best estimate avec $BE = \mathbb{E}^{\mathbb{P}\times\mathbb{Q}}(\Lambda)$ avec
+On calcule le best estimate par $BE = \mathbb{E}^{\mathbb{P}\times\mathbb{Q}}(\Lambda)$ avec
 
 * $\mathbb{P}$ la probabilité historique de l'assureur
 * $\mathbb{Q}$ la probabilité risque neutre
 
-En indiquant que $\tau$ peut également être le rachat des héritiers au décés de l'assuré, on a $F(t)=S(t) \mathbb{1}_{\tau=t}$. On note que dans le cas général $\mathbb{1}_{\tau=t}$ dépends des probabilités $\mathbb{Q}$ et $\mathbb{P}$ alors
+En considérant que la notion de rachat regroupe les rachats économiques ou les rachats par les héritiers du bénéficiaire, on a $F(t)=S(t) \mathbb{1}_{\tau=t}$. On note que dans le cas général $\mathbb{1}_{\tau=t}$ dépend des probabilités $\mathbb{Q}$ et $\mathbb{P}$. Nous avons
 
 $$BE = \sum\limits_{t=1}^{T}\mathbb{E}^{\mathbb{P}\times\mathbb{Q}}(\delta(t) S(t) \mathbb{1}_{\tau=t})$$
 
-En notant $\mathcal{F}_t$ l'information financière disponnible en $t$. On a alors
+En notant $\mathcal{F}_t$ l'information financière disponible en $t$. On a alors
 $$BE = \sum\limits_{t=1}^{T}\mathbb{E}^{\mathbb{Q}}(\delta(t) S(t) \mathbb{E}^{\mathbb{P}}(\mathbb{1}_{\tau=t} | \mathcal{F}_t))$$
 
 En notant $q_t := \mathbb{E}^{\mathbb{P}}(\mathbb{1}_{\tau=t} | \mathcal{F}_t)$ la probabilité de rachat, il vient 
 $$BE = \sum\limits_{t=1}^{T}\mathbb{E}^{\mathbb{Q}}(\delta(t) S(t) q_t)$$
 
-Comme les taux de rachat sont constants, le calcul de $q_t$ ne dépends ni de l'information financière, ni de la probabilité historique de l'assureur
+Comme les taux de rachat sont constants, le calcul de $q_t$ ne dépend ni de l'information financière, ni de la probabilité historique de l'assureur
 
 $$BE = \sum\limits_{t=1}^{T} q_t\mathbb{E}^{\mathbb{Q}}(\delta(t) S(t))$$
 
@@ -164,7 +164,7 @@ $$BE=S(0) \sum\limits_{t=1}^{T} q_t$$
 Finalement
 
 $$BE=S(0)$$
-**En cours, nous avons également démontré que ce résultat reste vrai si les rachats ne sont pas constants**. Ce résultat fondamental va diriger nos études et nous permettre d'être conforté dans les valeurs prisent par le BE empirique par monté carlo. **Le point central de cette étude sera alors de vérifier ce fait, et de confirmer que le BE de ce contrat est bien du prix initial de l'actif modélisé**.
+**En cours, nous avons également démontré que ce résultat reste vrai si les rachats ne sont pas constants**. Ce résultat fondamental va diriger nos études et nous permettre d'être conforté dans les valeurs estimées du BE empirique par la méthode de  Monte Carlo. **Le point central de cette étude sera alors de vérifier ce résultat, et de confirmer que le BE de ce contrat est bien égal au prix initial du sous-jacent modélisé**.
 
 ## Calcul du BE empirique
 
@@ -184,7 +184,7 @@ $$BE = \lim\limits_{n \rightarrow \infty} \widehat{BE}_n$$
 
 ## Sensibilités
 
-Pour des problèmatiques de temps de calcul, nous n'avons pas calculé la sensibilité elle même mais nous les avons graphés. Le process que nous avons suivit consiste simplement à calculer le BE en figeant tous les paramètres sauf celui sur lequel nous désirons observer l'impact.
+Pour des problèmatiques de temps de calcul, nous n'avons pas calculé la sensibilité elle mêmes, mais nous avons affiché sur des graphique les courbes de convergence des BE pour différentes valeurs pour chaque paramètre étudié, ceteris paribus.
 
 Testons les paramètres du modèle HJM présenté en partie II
 
@@ -230,9 +230,9 @@ BE(ZC=ZC,
 
 ```
 
-Pour ce qui est du modèle de taux forward HJM, on observe que modifier les deux paramètres qui le composent ne change pas les rédsultats, une variation de 0.005 fois le prix de l'active n'est pas suffisament significative.
+Pour ce qui est du modèle de taux forward HJM, on observe que modifier les deux paramètres qui le composent ne change pas les rédsultats, une variation de 0.005 fois le prix de l'actif n'est pas suffisament significative.
 
-Passons aux modèles sur les actions 
+Passons aux modèles action 
 
 ```{r sensi_2, echo = FALSE, fig.height= 3}
 par(mfrow = c(1,2))
@@ -240,7 +240,7 @@ BE(ZC=ZC,
    s.vol = seq(0,1,length.out=100)) %>% 
    {plot(.$s.vol,
          .$BE,
-         main="BE en fonction de la volatilité\n du taux court des actions",
+         main="BE en fonction de la volatilité\n du taux court de l'action",
          xlab = "taux court",
          ylab = "BE"
    )
@@ -249,7 +249,7 @@ BE(ZC=ZC,
    s.k = seq(1,3,length.out=50)) %>% 
    {plot(.$s.k,
          .$BE,
-         main="BE en fonction du k\n du taux court des actions",
+         main="BE en fonction du k\n du taux court de l'action",
          xlab = "k",
          ylab = "BE"
    )
@@ -265,7 +265,7 @@ BE(ZC=ZC,
    s.volStock = seq(0,1,length.out=100)) %>% 
    {plot(.$s.volStock,
          .$BE,
-         main="BE en fonction de la volatilité\n des actions",
+         main="BE en fonction de la volatilité\n de l'action",
          xlab = "volatilité",
          ylab = "BE"
    )
@@ -275,7 +275,7 @@ BE(ZC=ZC,
    s.stock0 = seq(10,200,length.out=100)) %>% 
    {plot(.$s.stock0,
          .$BE,
-         main="BE en fonction la valeur initiale\n des actions",
+         main="BE en fonction la valeur initiale\n de l'action",
          xlab = "S(0)",
          ylab = "BE"
    )
@@ -284,7 +284,7 @@ BE(ZC=ZC,
 
 ```
 
-Il est normal que la convergence soit plus longue en fonction de la volatilié. Pousser le nombre de simulations suffirait à corriger cet effet
+Il est cohérent que la vitesse de convergence soit croissante avec la volatilié. Pousser le nombre de simulations suffirait à corriger cet effet
 
 ```{r sensi_4, echo = FALSE, fig.height= 3}
 
@@ -293,7 +293,7 @@ BE(ZC=ZC,
    s.rho=seq(0,1,length.out=100)) %>% 
    {plot(.$s.rho,
          .$BE,
-         main="BE en fonction du rho\n des actions",
+         main="BE en fonction du rho\n de l'action",
          xlab = "rho",
          ylab = "BE"
    )
@@ -311,7 +311,7 @@ BE(ZC=ZC,
    txConjoncturel=seq(0,1,length.out=100)) %>% 
    {plot(.$txConjoncturel,
          .$BE,
-         main="BE en fonction du rachat\n conjoncturel",
+         main="BE en fonction du taux de rachat\n conjoncturel",
          xlab = "taux de rachat",
          ylab = "BE"
    )
@@ -321,7 +321,7 @@ BE(ZC=ZC,
    txStructurel=seq(0,1,length.out=100)) %>% 
    {plot(.$txStructurel,
          .$BE,
-         main="BE en fonction du rachat\n structurel",
+         main="BE en fonction du taux de rachat\n structurel",
          xlab = "taux de rachat",
          ylab = "BE"
    )
@@ -334,7 +334,7 @@ Conformément à nos attentes, les BE convergent bien vers le prix de l'actif en
 
 #IV. Conclusion et références
 
-Conformément à la démontration proposée en partie III, le BE reste stable malgré la perturbation de chaque paramètre de notre modèle. La seule chose qu'il est nécessaire de contrôler est de fait le nombre d'itération de notre modèle. Mathématiquement, le BE est une espérance (ordre 1) ainsi nous le calculons avec une approche "juste", que l'on peut caractériser de "prudente" par la courbe de taux fournis par EIOPA. Maintenant, le cadre posé est restreint, et ça, c'est naze. 
+Conformément à la démontration proposée en partie III, le BE reste stable malgré la perturbation de chaque paramètre de notre modèle. Une étude intéressante à mener sera la sensibilité de la vitesse de convergence aux variations des différents paramètres. Mathématiquement, le BE est une espérance (ordre 1). Ainsi nous le calculons avec une approche "juste", que l'on peut caractériser de "prudente" par la courbe de taux fournie par EIOPA. Maintenant, le cadre posé est restreint, et ça, c'est naze. 
 
 *Références* :
 
