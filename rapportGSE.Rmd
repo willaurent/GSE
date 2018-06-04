@@ -1,12 +1,10 @@
 ---
 title: "Générateurs de scénarios économiques"
 author: "Mehdi KHAIROUN, William LAURENT, Oskar LAVERNY, Pierre MARJOLLET"
-header-includes:
-  - \usepackage[francais]{babel}
 output:
   pdf_document: default
   html_document: default
-  word_document: default
+header-includes: \usepackage[francais]{babel}
 ---
 
 ```{r setup, include=FALSE}
@@ -14,7 +12,20 @@ knitr::opts_chunk$set(echo = TRUE)
 source("fonctions utiles.R")
 ```
 
+&nbsp;
+&nbsp;
+&nbsp;
+
+\begin{center}
+\includegraphics{logoISFAcourt.png}
+\end{center}
+
+&nbsp;
+&nbsp;
+&nbsp;
+
 \tableofcontents
+
 \newpage
 
 # I. Mise en place du framework
@@ -95,7 +106,7 @@ On modélise les actions par le modèle de Black-Scholes comportant un drift non
 $$\frac{dS_t}{S_t} = r_tdt + \sigma_{bs}(\rho dW_t^1 + \sqrt{1-\rho ^2}dW_t^2)$$
 Ici $\rho$ est un paramètre des sensibilité de l'actif aux 2 facteurs de risque que sont les 2 mouvements browniens.
 
-Nous avons, par défaut, gardé $\rho = 0.5$, et la volatilité constante $\sigma_bs = 0.2$ 
+Nous avons, par défaut, gardé $\rho = 0.5$, et la volatilité constante $\sigma_{bs} = 0.2$ 
 
 ### Test de martingalité et cohérence du marché
 
@@ -176,9 +187,8 @@ $$\widehat{BE}_n \, := \frac{1}{n}  \sum\limits_{k=1}^{n} \sum\limits_{t=1}^{T} 
 Enfin
 
 $$BE = \lim\limits_{n \rightarrow \infty} \widehat{BE}_n$$
+
 ## Résultats et temps de convergence
-
-
 
 ## Sensibilités
 
@@ -331,12 +341,12 @@ BE(ZC=ZC,
 
 Conformément à nos attentes, les BE convergent bien vers le prix de l'actif en $0$ comme démontré plus haut. Seul le taux de rachat semble ici avoir une influence sur la vitesse de convergence du BE. En effet, on observe une diminution de la dispersion des BE estimés avec la hausse du taux de rachat, indiquant ainsi une augmentation de la vitesse de convergence. Une explication de cette effet serait de considérer qu'une augmentation du taux de rachat induirait que l'unique flux financier généré par le contrat intervienne plus souvent avant le terme du contrat, réduisant ainsi l'influence de la volatilité du sous-jacent.
 
-
-# IV. Conclusion et références
+\newpage
+# IV. Conclusion
 
 Conformément à la démonstration proposée en partie III, le BE reste stable malgré la perturbation de chaque paramètre de notre modèle. Une étude intéressante à mener serait la sensibilité de la vitesse de convergence aux variations des différents paramètres.
-Mathématiquement, le BE est une espérance (ordre 1). Ainsi nous le calculons avec une approche "juste", que l'on peut caractériser de "prudente" par l'utilisation de la courbe de taux fournie par EIOPA. La faible complexité du cadre posé permet de tirer des résultats théoriques intéressants et de les confirmer par la simulation, mais il est évident que dans la pratique ce ne serait pas aussi trivial.
+Mathématiquement, le BE est une espérance (ordre 1). Ainsi nous le calculons avec une approche "juste", que l'on peut caractériser de "prudente" par l'utilisation de la courbe de taux fournie par EIOPA. La faible complexité du cadre posé permet de tirer des résultats théoriques intéressants et de les confirmer par la simulation, mais il est évident que dans la pratique ce ne serait pas aussi simple.
 
-*Références* :
+*Référence* :
 
 * http://www.ressources-actuarielles.net/EXT/ISFA/fp-isfa.nsf/34a14c286dfb0903c1256ffd00502d73/a5e99e9abf5d3674c125772f00600f6c/$FILE/ESG.pdf - Site de M. PLANCHET, documentation de la librairie ESG
