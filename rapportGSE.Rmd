@@ -83,7 +83,7 @@ En cours de $mathématiques financières$ on a vue qu'une unique mesure martinga
 $$\mu(t,T)dt = \sigma(t,T) \int\limits_t^T\sigma(t,s)ds$$
 Le drift étant une fonction de la volatilité, cela nous simplifie le modèle.
 
-Enfin, la structure de volatilité des taux forward est choisie comme étant induite par une caractérisation type Hull & White - Vasicek généralisé. On choisit
+Enfin, nous définissons la structure de volatilité des taux forward par la caractérisation de la volatilité du modèle de Hull-White dans le framework HJM. On choisit
 $$\sigma(t,T):=\sigma e^{-k(t-T)}$$
 On prendra $k=2$ et $\sigma=0,1$ par défaut.
 
