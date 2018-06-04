@@ -54,11 +54,11 @@ Sous Solvabilité II, le régulateur publie mensuellement des courbes de taux z�
 
 ### Méthodologie
 
-La croube des taux fournie par l'EIOPA est construite sur la base des taux observés sur le marché, *tant que ceux-ci sont liquides*, c'est a dire jusqu'a un *Last Liquid point* fixé a 20ans. Au dela, la courbe est extrapoler via la méthodologie de Smith-wilson, qui nécéssite un *Ultimate forward rate* comme paramètre d'entrée, fixé par EIOPA.
+La courbe des taux fournie par l'EIOPA est construite sur la base des taux observés sur le marché, tant que ceux-ci sont liquides, c'est a dire jusqu'a un *Last Liquid point* fixé a 20ans. Au dela, la courbe est extrapoler via la méthodologie de Smith-wilson, qui nécéssite un *Ultimate forward rate* comme paramètre d'entrée, fixé par EIOPA.
 
 ### Courbe choisie
 
-Nous aovns choisi d'utiliser la courbe fournie par l'EIOPA, sans ajustement de volatilité, sans chocs.
+Nous avons choisi d'utiliser la courbe fournie par l'EIOPA, sans ajustement de volatilité, sans chocs.
 
 ## Choix du modèle
 
@@ -201,7 +201,7 @@ objScenario <- build_gse(ZC = ZC,
                          s.rho=.5)
 
 ################################################################ GRAPHIQUES DE SENSIBILITE ####
-par(mfrow=c(1,2))
+par(cex.main=0.6,cex.axis=0.6,mfrow = c(1,2))
 # BE(ZC=ZC,
 #    base.horizon = seq(5,30,by=1)) %>% 
 #    {plot(.$base.horizon,
@@ -235,7 +235,7 @@ Pour ce qui est du modèle de taux forward HJM, on observe que modifier les deux
 Passons aux modèles action 
 
 ```{r sensi_2, echo = FALSE, fig.height= 3}
-par(mfrow = c(1,2))
+par(cex.main=0.6,cex.axis=0.6,mfrow = c(1,2))
 BE(ZC=ZC,
    s.vol = seq(0,1,length.out=100)) %>% 
    {plot(.$s.vol,
@@ -260,7 +260,7 @@ BE(ZC=ZC,
 ```
 
 ```{r sensi_2_, echo = FALSE, fig.height= 3}
-par(mfrow = c(1,2))
+par(cex.main=0.6,cex.axis=0.6,mfrow = c(1,2))
 BE(ZC=ZC,
    s.volStock = seq(0,1,length.out=100)) %>% 
    {plot(.$s.volStock,
@@ -288,7 +288,7 @@ Il est cohérent que la vitesse de convergence soit décroissante avec la volati
 
 ```{r sensi_4, echo = FALSE, fig.height= 3}
 
-par(mfrow = c(1,2))
+par(cex.main=0.6,cex.axis=0.6,mfrow = c(1,2))
 BE(ZC=ZC,
    s.rho=seq(0,1,length.out=100)) %>% 
    {plot(.$s.rho,
@@ -305,7 +305,7 @@ BE(ZC=ZC,
 
 ```{r sensi_5, echo = FALSE, fig.height= 3}
 
-par(mfrow = c(1,2))
+par(cex.main=0.6,cex.axis=0.6,mfrow = c(1,2))
 
 BE(ZC=ZC,
    txConjoncturel=seq(0,1,length.out=100)) %>% 
