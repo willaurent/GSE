@@ -1,11 +1,10 @@
 ---
 title: "Générateurs de scénarios économiques"
-author: "Mehdi KAIROUN, William LAURENT, Oskar LAVERNY, Pierre MARJOLLET"
+author: "Mehdi KHAIROUN, William LAURENT, Oskar LAVERNY, Pierre MARJOLLET"
 header-includes:
   - \usepackage[francais]{babel}
 output:
-  pdf_document: default
-  word_document: default
+
   html_document: default
 ---
 
@@ -162,7 +161,7 @@ $$BE=S(0) \sum\limits_{t=1}^{T} q_t$$
 Finalement
 
 $$BE=S(0)$$
-**En cours, nous avons également démontré que ce résultat reste vrai si les rachats ne sont pas constants**. Ce résultat fondamental va diriger nos études et nous permettre d'être conforté dans les valeurs estimées du BE empirique par la méthode de  Monte Carlo. **Le point central de cette étude sera alors de vérifier ce résultat, et de confirmer que le BE de ce contrat est bien égal au prix initial du sous-jacent modélisé**.
+**En cours, nous avons également démontré que ce résultat reste vrai si les rachats ne sont pas constants**. Ce résultat fondamental va diriger nos études et nous permettre d'être confortés avec les valeurs estimées du BE empirique par la méthode de  Monte Carlo. **Le point central de cette étude sera alors de vérifier ce résultat, et de confirmer que le BE de ce contrat est bien égal au prix initial du sous-jacent modélisé**.
 
 ## Calcul du BE empirique
 
@@ -283,7 +282,7 @@ BE(ZC=ZC,
 ```
 
 
-Ici encore, perturber la volatilité et la valeur initiale du sous-jacent ne change pas la valeur du BE estimée. Toutefois, la variance des BE simulés semble être croissante avec la volatilité de l'action, indiquant ainsi une diminution de la vitesse de convergence. Ce résultat semble bien cohérent avec l'idée que l'augmentation de la volatilité du sous-jacent augmente la volatilité du BE d'un produit qui a cet actif pour support. Pousser le nombre de simulations suffirait à corriger cet effet.
+Ici encore, perturber la volatilité et la valeur initiale du sous-jacent ne change pas la valeur estimée du BE  Toutefois, la variance des BE simulés semble être croissante avec la volatilité de l'action, indiquant ainsi une diminution de la vitesse de convergence. Ce résultat semble bien cohérent avec l'idée que l'augmentation de la volatilité du sous-jacent augmente la volatilité du BE d'un produit qui a cet actif pour support. Pousser le nombre de simulations suffirait à corriger cet effet.
 
 ```{r sensi_4, echo = FALSE, fig.height= 3}
 
@@ -339,4 +338,4 @@ Mathématiquement, le BE est une espérance (ordre 1). Ainsi nous le calculons a
 
 *Références* :
 
-* http://www.ressources-actuarielles.net/EXT/ISFA/fp-isfa.nsf/34a14c286dfb0903c1256ffd00502d73/a5e99e9abf5d3674c125772f00600f6c/$FILE/ESG.pdf - Site de M. PLANCHET, documentation de la librairie GSE
+* http://www.ressources-actuarielles.net/EXT/ISFA/fp-isfa.nsf/34a14c286dfb0903c1256ffd00502d73/a5e99e9abf5d3674c125772f00600f6c/$FILE/ESG.pdf - Site de M. PLANCHET, documentation de la librairie ESG
