@@ -1,10 +1,12 @@
 ---
 title: "Générateurs de scénarios économiques"
 author: "Mehdi KHAIROUN, William LAURENT, Oskar LAVERNY, Pierre MARJOLLET"
+header-includes: 
+  - \usepackage[francais]{babel}
 output:
   pdf_document: default
   html_document: default
-header-includes: \usepackage[francais]{babel}
+
 ---
 
 ```{r setup, include=FALSE}
