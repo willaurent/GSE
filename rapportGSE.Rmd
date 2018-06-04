@@ -201,7 +201,7 @@ objScenario <- build_gse(ZC = ZC,
                          s.rho=.5)
 
 ################################################################ GRAPHIQUES DE SENSIBILITE ####
-par(cex.main=0.6,cex.axis=0.6,mfrow = c(1,2))
+par(cex.main=0.8,cex.axis=0.8,cex.lab=0.8,oma=c(0,0,0,0),mfrow = c(1,2))
 # BE(ZC=ZC,
 #    base.horizon = seq(5,30,by=1)) %>% 
 #    {plot(.$base.horizon,
@@ -235,7 +235,7 @@ Pour ce qui est du modèle de taux forward HJM, on observe que modifier les deux
 Passons aux modèles action 
 
 ```{r sensi_2, echo = FALSE, fig.height= 3}
-par(cex.main=0.6,cex.axis=0.6,mfrow = c(1,2))
+par(cex.main=0.8,cex.axis=0.8,cex.lab=0.8,oma=c(0,0,0,0),mfrow = c(1,2))
 BE(ZC=ZC,
    s.vol = seq(0,1,length.out=100)) %>% 
    {plot(.$s.vol,
@@ -260,7 +260,7 @@ BE(ZC=ZC,
 ```
 
 ```{r sensi_2_, echo = FALSE, fig.height= 3}
-par(cex.main=0.6,cex.axis=0.6,mfrow = c(1,2))
+par(cex.main=0.8,cex.axis=0.8,cex.lab=0.8,oma=c(0,0,0,0),mfrow = c(1,2))
 BE(ZC=ZC,
    s.volStock = seq(0,1,length.out=100)) %>% 
    {plot(.$s.volStock,
@@ -288,7 +288,7 @@ Il est cohérent que la vitesse de convergence soit décroissante avec la volati
 
 ```{r sensi_4, echo = FALSE, fig.height= 3}
 
-par(cex.main=0.6,cex.axis=0.6,mfrow = c(1,2))
+par(cex.main=0.8,cex.axis=0.8,cex.lab=0.8,oma=c(0,0,0,0),mfrow = c(1,2))
 BE(ZC=ZC,
    s.rho=seq(0,1,length.out=100)) %>% 
    {plot(.$s.rho,
@@ -305,7 +305,7 @@ BE(ZC=ZC,
 
 ```{r sensi_5, echo = FALSE, fig.height= 3}
 
-par(cex.main=0.6,cex.axis=0.6,mfrow = c(1,2))
+par(cex.main=0.8,cex.axis=0.8,cex.lab=0.8,oma=c(0,0,0,0),mfrow = c(1,2))
 
 BE(ZC=ZC,
    txConjoncturel=seq(0,1,length.out=100)) %>% 
