@@ -4,8 +4,9 @@ author: "Mehdi KHAIROUN, William LAURENT, Oskar LAVERNY, Pierre MARJOLLET"
 header-includes:
   - \usepackage[francais]{babel}
 output:
-
+  pdf_document: default
   html_document: default
+  word_document: default
 ---
 
 ```{r setup, include=FALSE}
