@@ -5,8 +5,8 @@ header-includes:
   - \usepackage[francais]{babel}
 output:
   pdf_document: default
-  html_document: default
   word_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -33,7 +33,7 @@ Pour mener à bien ce projet, nous allons exploiter le langage open-source **R**
 
 * **ESG** - librairie co-produite en 2013 par Frédérique PLANCHET, enseignant chercheur de l'ISFA. Elle offre une procédure pour valoriser plusieurs produits d'assurance (type épargne, retraite, ...)
 * **RMarkdown** - librairie proposée par les fondateurs de RStudio, dans le but de produire des rendus PDF de code. Elle compile le code R et comprend le language *LaTeX*.
-* **magrittr** - librairie incoutournable. Elle propose de performants opérateurs très plébiscités par les utilisateurs de R pour gagner en lisibilité de code
+* **magrittr** - librairie incoutournable. Elle propose de performants opérateurs plébiscités par les utilisateurs de R pour gagner en lisibilité de code
 
 # II. Création d'un GSE mono-indice
 
@@ -54,7 +54,7 @@ Sous Solvabilité II, le régulateur publie mensuellement des courbes de taux z�
 
 ### Méthodologie
 
-La courbe des taux fournie par l'EIOPA est construite sur la base des taux observés sur le marché, tant que ceux-ci sont liquides, c'est a dire jusqu'a un *Last Liquid point* fixé a 20ans. Au-delà, la courbe est extrapolée via la méthodologie de Smith-wilson, qui nécéssite un *Ultimate forward rate* comme paramètre d'entrée, fixé par EIOPA.
+La courbe des taux fournie par l'EIOPA est construite sur la base des taux observés sur le marché, tant que ceux-ci sont liquides, c'est à dire jusqu'à un *Last Liquid point* fixé à 20ans. Au-delà, la courbe est extrapolée via la méthodologie de Smith-wilson, qui nécessite un *Ultimate forward rate* comme paramètre d'entrée, fixé par EIOPA.
 
 ### Courbe choisie
 
@@ -62,7 +62,7 @@ Nous avons choisi d'utiliser la courbe fournie par l'EIOPA, sans ajustement de v
 
 ## Choix du modèle
 
-Pour plus de simplicité de mise en oeuvre, nous avons choisi d'utiliser les modèles déjà implémentés dans la librairie GSE. Nous présentons dans cette partie la modélisation retenue ainsi que les paramètres initiaux de nos simulations.
+Pour plus de simplicité de mise en oeuvre, nous avons choisi d'utiliser les modèles déjà implémentés dans la librairie ESG. Nous présentons dans cette partie la modélisation retenue ainsi que les paramètres initiaux de nos simulations.
 
 Dans la suite, on retiendra les notations suivantes :
 
@@ -71,7 +71,7 @@ Dans la suite, on retiendra les notations suivantes :
 * $f(t,T) = \lim\limits_{S \leftarrow T_+}F(t; T, S) := - \frac{d\,logP(t,T)}{d\,T}$ le taux forward instantanné en t, d'échéance T.
 * $(r_t = \lim_{T \leftarrow t_+}f(t,T), t \ge 0)$ le taux court en t.
 
-L'unique input de notre modélisation est la courbe de zéro coupons publiée par le régulateur. L'ensemble des autres paramètres, notamment ceux analysés dans la partie portant sur les calculs de sensibilité, ont été choisis à dire d'expert, ou fixés dans des plages. Enfin, l'ensemble des paramètres non-fixés se déduit facilement de la courbe des zéro-coupons.
+L'unique input de notre modélisation est la courbe de zéro coupons publiée par le régulateur. L'ensemble des autres paramètres, notamment ceux analysés dans la partie portant sur les calculs de sensibilité, ont été choisis à dire d'expert, ou fixés dans des plages.
 
 ### Modèle de taux court
 
@@ -79,7 +79,7 @@ Nous modélisons les taux forward instantanés $f$ par *Heath-Jarrow-Merton - HJ
 $$df(t,T) = \mu(t,T)dt + \sigma(t,T)dW_t$$
 Ce modèle HJM nous permettra, une fois $f(t,T)$ calibré, de produire les taux courts $r_t$.
 
-D'après le $mathématiques financières$, un critère d'unicité de la mesure martingale en AOA est de définir le drift:
+D'après le cours de $mathématiques financières$, un critère d'unicité de la mesure martingale en AOA est de définir le drift comme:
 $$\mu(t,T)dt = \sigma(t,T) \int\limits_t^T\sigma(t,s)ds$$
 Le drift étant une fonction de la volatilité, cela nous simplifie le modèle.
 
@@ -93,13 +93,13 @@ Nous avons maintenant des valeurs de taux courts et des structures de volatilit�
 
 On modélise les actions par le modèle de Black-Scholes comportant un drift non-constant déduit du modèle HJM présenté précédemment:
 $$\frac{dS_t}{S_t} = r_tdt + \sigma_{bs}(\rho dW_t^1 + \sqrt{1-\rho ^2}dW_t^2)$$
-Ici $\rho$ est un paramètre des snesibilités de l'actif aux 2 facteurs de risque que sont les 2 mouvements browniens.
+Ici $\rho$ est un paramètre des sensibilité de l'actif aux 2 facteurs de risque que sont les 2 mouvements browniens.
 
-Nous avons, par défaut, gardé une valeur positive $\rho = 0.5$, et la volatilité constante $\sigma_bs = 0.2$ 
+Nous avons, par défaut, gardé $\rho = 0.5$, et la volatilité constante $\sigma_bs = 0.2$ 
 
 ### Test de martingalité et cohérence du marché
 
-Enfin, pour nous assuré de la cohérence de nos modélisations, nous vérifions que les actifs actualisés issus de notre modélisation sont bien des martingales. Pour ça, nous vérifions tout simplement qu'à chaque horizon t fixé, nous avons bien que l'actif actualisé en 0 est égal à sa valeur en 0.
+Enfin, pour nous assurer de la cohérence de nos modélisations, nous vérifions que les actifs actualisés issus de notre modélisation sous la probabilité risque neutre sont bien des martingales. Pour ça, nous vérifions tout simplement qu'à chaque horizon t fixé, nous avons bien que l'actif actualisé en 0 est égal à sa valeur en 0.
 
 ```{r, echo = F}
 objScenario <- build_gse(ZC = ZC,base.nScenarios = 10000)
@@ -115,8 +115,6 @@ Le test de martingalité est plutôt satisfaisant. Le ratio $\frac{S(t)}{P(0,t)}
 
 Pour ce qui est de la cohérence de marché (**market consistency**), nous ne sommes ici pas en mesure de la valdider. En effet, le seul paramètre d'entrée de nos modèles est la courbe de taux de l'EIOPA. Nous n'avons aucune base de comparaison que nous pourrions exploiter ici en guise de référence du marché. Ainsi, pour peu que les fonctions que nous utilisons soient codées correctement, ce qui est a priori le cas, la cohérence de marché est *de facto* vérifiée.
 
-Nous reviendrons plus tard sur la calibration du modèle de taux court et l'influence sur la cohérence avec le marché.
-
 # III. Analyse et application à un contrat d'épargne en UC
 
 ## Contrat et résultat fondamental
@@ -131,7 +129,7 @@ Lors du cours de *Modèles financiers en assurance* donné par M. PLANCHET, nous
 * Rachat en $\tau$ permis n'importe quand de fréquence constante
 * Pas de prorogation $(\tau \le T)$ - *A terme, le contrat est rachêté*
 
-On définit $\Lambda \, := \sum\limits_{t=1}^{T}\delta(t)F(t)$, $\Lambda$ la somme des engagements actualisés de l'assureur par
+On définit $\Lambda \, := \sum\limits_{t=1}^{T}\delta(t)F(t)$, $\Lambda$ la somme des flux futurs actualisés nés des engagements de l'assureur auprès de de ses assurés par
 
 * $\delta(t) \, := e^{-\int\limits_{0}^{t}r_u\,du}$ le *discount factor*, $(r_u, u\ge0)$ le taux court
 * $F$ les flux représentant les engagements de l'assureur
@@ -143,7 +141,7 @@ On calcule le best estimate par $BE = \mathbb{E}^{\mathbb{P}\times\mathbb{Q}}(\L
 * $\mathbb{P}$ la probabilité historique de l'assureur
 * $\mathbb{Q}$ la probabilité risque neutre
 
-En considérant que la notion de rachat regroupe les rachats économiques ou les rachats par les héritiers du bénéficiaire, on a $F(t)=S(t) \mathbb{1}_{\tau=t}$. On note que dans le cas général $\mathbb{1}_{\tau=t}$ dépend des probabilités $\mathbb{Q}$ et $\mathbb{P}$. Nous avons
+En considérant que la notion de rachat regroupe les rachats économiques et les rachats par les héritiers du bénéficiaire, on a $F(t)=S(t) \mathbb{1}_{\tau=t}$. On note que dans le cas général $\mathbb{1}_{\tau=t}$ dépend des probabilités $\mathbb{Q}$ et $\mathbb{P}$. Nous avons
 
 $$BE = \sum\limits_{t=1}^{T}\mathbb{E}^{\mathbb{P}\times\mathbb{Q}}(\delta(t) S(t) \mathbb{1}_{\tau=t})$$
 
@@ -173,7 +171,7 @@ Définissons le BE empirique pour $n$ simulations :
 $$\widehat{BE}_n \, := \frac{1}{n}  \sum\limits_{k=1}^{n} \sum\limits_{t=1}^{T} \delta^{(k)}(t)F^{(k)}(t)$$
 
 * $\delta^{(k)}(t)$ la $k^{ième}$ simulation du facteur d'actualisation en $t$
-* $F^{(k)}(t)$ la $k^{ième}$ simulation de l'engagement de l'assureur en $t$
+* $F^{(k)}(t)$ la $k^{ième}$ simulation du flux de l'assureur en $t$
 
 Enfin
 
@@ -184,7 +182,7 @@ $$BE = \lim\limits_{n \rightarrow \infty} \widehat{BE}_n$$
 
 ## Sensibilités
 
-Pour des problèmatiques de temps de calcul, nous n'avons pas calculé la sensibilité elle mêmes, mais nous avons affiché sur des graphiques les courbes de convergence des BE pour différentes valeurs pour chaque paramètre étudié, ceteris paribus.
+Pour des problèmatiques de temps de calcul, nous n'avons pas calculé la sensibilité elle même, mais nous avons affiché sur des graphiques des simulations de BE pour différentes valeurs de chaque paramètre étudié, ceteris paribus. 
 
 Testons les paramètres du modèle HJM présenté en partie II
 
@@ -230,7 +228,7 @@ BE(ZC=ZC,
 
 ```
 
-Pour ce qui est du modèle de taux forward HJM, on observe que modifier les deux paramètres qui le composent ne change pas les résultats significativement, cela ne fait que bruiter.
+Pour ce qui est du modèle de taux forward HJM, on observe que modifier les deux paramètres qui le composent ne change pas les résultats significativement, la volatilité des BE simulés semble rester constante, ce qui indique une vitesse de convergence constante.
 
 Passons au modèle action 
 
@@ -284,7 +282,8 @@ BE(ZC=ZC,
 
 ```
 
-Il est cohérent que la vitesse de convergence soit décroissante avec la volatilié. Pousser le nombre de simulations suffirait à corriger cet effet, dans un cas de volatilité (implicite ou explicite) plus grande que prévue.
+
+Ici encore, perturber la volatilité et la valeur initiale du sous-jacent ne change pas la valeur du BE estimée. Toutefois, la variance des BE simulés semble être croissante avec la volatilité de l'action, indiquant ainsi une diminution de la vitesse de convergence. Ce résultat semble bien cohérent avec l'idée que l'augmentation de la volatilité du sous-jacent augmente la volatilité du BE d'un produit qui a cet actif pour support. Pousser le nombre de simulations suffirait à corriger cet effet.
 
 ```{r sensi_4, echo = FALSE, fig.height= 3}
 
@@ -330,11 +329,13 @@ BE(ZC=ZC,
 
 ```
 
-Conformément à nos attentes, les BE convergent bien vers le prix de l'actif en $0$ comme démontré plus haut. De plus, la majorité des paramètre n'influe que peu sur la vitesse de convergence. Le résultat théorique de convergence du BE vers $S(0)$ est donc clairement confirmé par les simulations.
+Conformément à nos attentes, les BE convergent bien vers le prix de l'actif en $0$ comme démontré plus haut. Seul le taux de rachat semble ici avoir une influence sur la vitesse de convergence du BE. En effet, on observe une diminution de la dispersion des BE estimés avec la hausse du taux de rachat, indiquant ainsi une augmentation de la vitesse de convergence. Une explication de cette effet serait de considérer qu'une augmentation du taux de rachat induirait que l'unique flux financier généré par le contrat intervienne plus souvent avant le terme du contrat, réduisant ainsi l'influence de la volatilité du sous-jacent.
+
 
 # IV. Conclusion et références
 
-Conformément à la démontration proposée en partie III, le BE reste stable malgré la perturbation de chaque paramètre de notre modèle. Une étude intéressante à mener sera la sensibilité de la vitesse de convergence aux variations des différents paramètres. Mathématiquement, le BE est une espérance (ordre 1). Ainsi nous le calculons avec une approche "juste", que l'on peut caractériser de "prudente" par la courbe de taux fournie par EIOPA. La faible conplexité du cadre posé permet de tirer des résultats théoriques intéressants et de les confirmer par la simulation, mais il est évident qu'une aplication pratique ne serais pas aussi triviale.
+Conformément à la démonstration proposée en partie III, le BE reste stable malgré la perturbation de chaque paramètre de notre modèle. Une étude intéressante à mener serait la sensibilité de la vitesse de convergence aux variations des différents paramètres.
+Mathématiquement, le BE est une espérance (ordre 1). Ainsi nous le calculons avec une approche "juste", que l'on peut caractériser de "prudente" par l'utilisation de la courbe de taux fournie par EIOPA. La faible complexité du cadre posé permet de tirer des résultats théoriques intéressants et de les confirmer par la simulation, mais il est évident que dans la pratique ce ne serait pas aussi trivial.
 
 *Références* :
 
