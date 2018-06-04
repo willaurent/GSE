@@ -25,7 +25,7 @@ Ce projet de groupe est effectué dans le cadre du cours de *Générateurs de sc
 
 * Création d'un GSE "mono indice" risque neutre
 * Calcul de *Best Estimate* - **BE** *empirique* dans le cadre d'un contrat d'épargne en *Unité de Compte* - **UC**
-* Etude de la sensibilité induite par le calibrage du modèle séléctionné
+* Etude de la sensibilité induite par le calibrage du modèle sélectionné
 
 ## Nos outils
 
@@ -50,11 +50,11 @@ Les paramètres que nous avons retenus pour la simulation sont les suivants:
 
 ### Réglementation
 
-Sous Solvabilité II, le régulateur publie mensuellement des courbes de taux zéro coupons. Ces courbes servent à actualiser les engagements de l'assureur en simulant des prix d'actifs dans le monde risque neutre. Le régulateur indique également que la publication de courbes de taux permet d'harmoniser et d'auditer les calculs des provisions.
+Sous Solvabilité II, le régulateur publie mensuellement des courbes de taux zéro coupons. Ces courbes servent à estimer la valeur actuelle des engagements de l'assureur en acualisant les flux futurs obtenus à partir de simulations de prix d'actifs dans le monde risque neutre. Le régulateur indique également que la publication de courbes de taux permet d'harmoniser et d'auditer les calculs des provisions.
 
 ### Méthodologie
 
-La courbe des taux fournie par l'EIOPA est construite sur la base des taux observés sur le marché, tant que ceux-ci sont liquides, c'est a dire jusqu'a un *Last Liquid point* fixé a 20ans. Au dela, la courbe est extrapoler via la méthodologie de Smith-wilson, qui nécéssite un *Ultimate forward rate* comme paramètre d'entrée, fixé par EIOPA.
+La courbe des taux fournie par l'EIOPA est construite sur la base des taux observés sur le marché, tant que ceux-ci sont liquides, c'est a dire jusqu'a un *Last Liquid point* fixé a 20ans. Au-delà, la courbe est extrapolée via la méthodologie de Smith-wilson, qui nécéssite un *Ultimate forward rate* comme paramètre d'entrée, fixé par EIOPA.
 
 ### Courbe choisie
 
@@ -71,15 +71,15 @@ Dans la suite, on retiendra les notations suivantes :
 * $f(t,T) = \lim\limits_{S \leftarrow T_+}F(t; T, S) := - \frac{d\,logP(t,T)}{d\,T}$ le taux forward instantanné en t, d'échéance T.
 * $(r_t = \lim_{T \leftarrow t_+}f(t,T), t \ge 0)$ le taux court en t.
 
-L'unique input de notre modélisation est la courbe de zéro coupons publiée par le régulateur. L'ensemble des autres paramètres, notamment ceux analysés dans la partie portant sur les calculs de sensibilité, ont été choisis à dire d'expert, ou fixés dans des plages. Enfin, l'ensemble des paramètres non-fixés se déduit facielment de la courbe des zéro-coupons.
+L'unique input de notre modélisation est la courbe de zéro coupons publiée par le régulateur. L'ensemble des autres paramètres, notamment ceux analysés dans la partie portant sur les calculs de sensibilité, ont été choisis à dire d'expert, ou fixés dans des plages. Enfin, l'ensemble des paramètres non-fixés se déduit facilement de la courbe des zéro-coupons.
 
-### Modèle de taux courts
+### Modèle de taux court
 
 Nous modélisons les taux forward instantanés $f$ par *Heath-Jarrow-Merton - HJM*. On a
 $$df(t,T) = \mu(t,T)dt + \sigma(t,T)dW_t$$
 Ce modèle HJM nous permettra, une fois $f(t,T)$ calibré, de produire les taux courts $r_t$.
 
-En cours de $mathématiques financières$ on a vue qu'une unique mesure martingale en absence d'opportunité d'arbitrage induit
+D'après le $mathématiques financières$, un critère d'unicité de la mesure martingale en AOA est de définir le drift:
 $$\mu(t,T)dt = \sigma(t,T) \int\limits_t^T\sigma(t,s)ds$$
 Le drift étant une fonction de la volatilité, cela nous simplifie le modèle.
 
@@ -87,17 +87,17 @@ Enfin, nous définissons la structure de volatilité des taux forward par la car
 $$\sigma(t,T):=\sigma e^{-k(t-T)}$$
 On prendra $k=2$ et $\sigma=0,1$ par défaut.
 
-Nous avons maintenant des valeurs de taux courts et des structures de volatilité des taux forward. La section suivante détaille la construction d'un modèle d'actif sur cette base.
+Nous avons maintenant des valeurs de taux courts et des structures de volatilité des taux forward. La section suivante détaille la construction d'un modèle d'actifs sur cette base.
 
 ### Modélisation des actifs
 
-On modélise les actions par le modèle de Black-Scholes comportant un drift non-constant suivant un modèle de vasicek généralisé - différent du taux court précédent:
+On modélise les actions par le modèle de Black-Scholes comportant un drift non-constant déduit du modèle HJM présenté précédemment:
 $$\frac{dS_t}{S_t} = r_tdt + \sigma_{bs}(\rho dW_t^1 + \sqrt{1-\rho ^2}dW_t^2)$$
-Ici $\rho$ représente la corrélation entre l'action et le taux d'intérêt, modélisée par $(W_t)_t^i,i=1,2$, mouvements browniens standard en monde risque-neutre.
+Ici $\rho$ est un paramètre des snesibilités de l'actif aux 2 facteurs de risque que sont les 2 mouvements browniens.
 
-Nous avons, par défaut, gardé une corrélation positive $\rho = 0.5$, et la volatilité constante $\sigma_bs = 0.2$ 
+Nous avons, par défaut, gardé une valeur positive $\rho = 0.5$, et la volatilité constante $\sigma_bs = 0.2$ 
 
-### Tests de martingalité et consistence du marché
+### Test de martingalité et cohérence du marché
 
 Enfin, pour nous assuré de la cohérence de nos modélisations, nous vérifions que les actifs actualisés issus de notre modélisation sont bien des martingales. Pour ça, nous vérifions tout simplement qu'à chaque horizon t fixé, nous avons bien que l'actif actualisé en 0 est égal à sa valeur en 0.
 
@@ -113,9 +113,9 @@ mymtgtest(objScenario
 ```
 Le test de martingalité est plutôt satisfaisant. Le ratio $\frac{S(t)}{P(0,t)} \frac{1}{S(0)}$ est très proche de $1$.
 
-Pour ce qui est de la consistence de marché (**market consistency**), nous ne sommes ici pas en mesure de la valdider. En effet, le seul paramètre d'entrée de nos modèles est la courbe de taux de l'EIOPA. Nous n'avons aucune base de comparaison que nous pourrions exploiter ici en guise de référence du marché. Ainsi, pour peu que les fonctions que nous utilisons soient codées correctement, ce qui est a priori le cas, la consistence de marché est *de facto* vérifiée.
+Pour ce qui est de la cohérence de marché (**market consistency**), nous ne sommes ici pas en mesure de la valdider. En effet, le seul paramètre d'entrée de nos modèles est la courbe de taux de l'EIOPA. Nous n'avons aucune base de comparaison que nous pourrions exploiter ici en guise de référence du marché. Ainsi, pour peu que les fonctions que nous utilisons soient codées correctement, ce qui est a priori le cas, la cohérence de marché est *de facto* vérifiée.
 
-Nous reviendrons plus tard sur la calibration du modèle de taux court et l'influence sur la consistence avec le marché.
+Nous reviendrons plus tard sur la calibration du modèle de taux court et l'influence sur la cohérence avec le marché.
 
 # III. Analyse et application à un contrat d'épargne en UC
 
@@ -230,9 +230,9 @@ BE(ZC=ZC,
 
 ```
 
-Pour ce qui est du modèle de taux forward HJM, on observe que modifier les deux paramètres qui le composent ne change pas les rédsultats, une variation de 0.005 fois le prix de l'actif n'est pas suffisament significative.
+Pour ce qui est du modèle de taux forward HJM, on observe que modifier les deux paramètres qui le composent ne change pas les résultats. Une variation de 0.005 fois le prix de l'actif n'est pas suffisamment significative.
 
-Passons aux modèles action 
+Passons au modèle action 
 
 ```{r sensi_2, echo = FALSE, fig.height= 3}
 par(cex.main=0.8,cex.axis=0.8,cex.lab=0.8,oma=c(0,0,0,0),mfrow = c(1,2))
@@ -241,7 +241,7 @@ BE(ZC=ZC,
    {plot(.$s.vol,
          .$BE,
          main="BE en fonction de la volatilité\n du taux court de l'action",
-         xlab = "taux court",
+         xlab = "Taux court",
          ylab = "BE"
    )
      abline(h=1)}
@@ -312,7 +312,7 @@ BE(ZC=ZC,
    {plot(.$txConjoncturel,
          .$BE,
          main="BE en fonction du taux de rachat\n conjoncturel",
-         xlab = "taux de rachat",
+         xlab = "Taux de rachat",
          ylab = "BE"
    )
      abline(h=1)}
@@ -322,7 +322,7 @@ BE(ZC=ZC,
    {plot(.$txStructurel,
          .$BE,
          main="BE en fonction du taux de rachat\n structurel",
-         xlab = "taux de rachat",
+         xlab = "Taux de rachat",
          ylab = "BE"
    )
      abline(h=1)}
@@ -330,7 +330,7 @@ BE(ZC=ZC,
 
 ```
 
-Conformément à nos attentes, les BE convergent bien vers le prix de l'actif en $0$ comme démontré plus haut. De plus, la plus part des paramètre n'influent que peu sur la vitesse de convergence. Le résultat théorique de convergence du BE vers $S(0)$ est donc clairement confirmé par les simulations.
+Conformément à nos attentes, les BE convergent bien vers le prix de l'actif en $0$ comme démontré plus haut. De plus, la majorité des paramètre n'influe que peu sur la vitesse de convergence. Le résultat théorique de convergence du BE vers $S(0)$ est donc clairement confirmé par les simulations.
 
 # IV. Conclusion et références
 
