@@ -24,6 +24,9 @@ source("fonctions utiles.R")
 
 &nbsp;
 &nbsp;
+
+\textit{L'ensemble des fichiers et du code nécéssaires pour écrire ce rapport sont disponibles à l'adresse suivante : https://github.com/willitest/GSE}
+
 &nbsp;
 
 \tableofcontents
