@@ -339,13 +339,13 @@ BE(ZC=ZC,
 
 ```
 
-Conformément à nos attentes, les BE convergent bien vers le prix de l'actif en $0$ comme démontré plus haut. Seul le taux de rachat semble ici avoir une influence sur la vitesse de convergence du BE. En effet, on observe une diminution de la dispersion des BE estimés avec la hausse du taux de rachat, indiquant ainsi une augmentation de la vitesse de convergence. Une explication de cette effet serait de considérer qu'une augmentation du taux de rachat induirait que l'unique flux financier généré par le contrat intervienne plus souvent avant le terme du contrat, réduisant ainsi l'influence de la volatilité du sous-jacent.
+Conformément à nos attentes, les BE convergent bien vers le prix de l'actif en $0$ comme démontré plus haut. Seul le taux de rachat semble ici avoir une influence sur la vitesse de convergence du BE. En effet, on observe une diminution de la dispersion des BE estimés avec la hausse du taux de rachat, indiquant ainsi une augmentation de la vitesse de convergence. Une explication de cet effet serait de considérer qu'une augmentation du taux de rachat induirait que l'unique flux financier généré par le contrat intervienne plus souvent avant le terme du contrat, réduisant ainsi l'influence de la volatilité du sous-jacent.
 
 \newpage
 # IV. Conclusion
 
 Conformément à la démonstration proposée en partie III, le BE reste stable malgré la perturbation de chaque paramètre de notre modèle. Une étude intéressante à mener serait la sensibilité de la vitesse de convergence aux variations des différents paramètres.
-Mathématiquement, le BE est une espérance (ordre 1). Ainsi nous le calculons avec une approche "juste", que l'on peut caractériser de "prudente" par l'utilisation de la courbe de taux fournie par EIOPA. La faible complexité du cadre posé permet de tirer des résultats théoriques intéressants et de les confirmer par la simulation, mais il est évident que dans la pratique ce ne serait pas aussi simple.
+Mathématiquement, le BE est dans Sovalibité II une espérance (ordre 1). Ainsi nous le calculons avec une approche "juste", que l'on pourrais opposer à une approche "prudente" en comptes sociaux. La faible complexité du cadre posé permet de tirer des résultats théoriques intéressants et de les confirmer par la simulation, même s'il est évident que dans la pratique d'autres paramètres seraient à prendre en compte.
 
 *Référence* :
 
