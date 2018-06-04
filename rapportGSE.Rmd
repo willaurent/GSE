@@ -184,7 +184,7 @@ $$BE = \lim\limits_{n \rightarrow \infty} \widehat{BE}_n$$
 
 ## Sensibilités
 
-Pour des problèmatiques de temps de calcul, nous n'avons pas calculé la sensibilité elle mêmes, mais nous avons affiché sur des graphique les courbes de convergence des BE pour différentes valeurs pour chaque paramètre étudié, ceteris paribus.
+Pour des problèmatiques de temps de calcul, nous n'avons pas calculé la sensibilité elle mêmes, mais nous avons affiché sur des graphiques les courbes de convergence des BE pour différentes valeurs pour chaque paramètre étudié, ceteris paribus.
 
 Testons les paramètres du modèle HJM présenté en partie II
 
@@ -230,7 +230,7 @@ BE(ZC=ZC,
 
 ```
 
-Pour ce qui est du modèle de taux forward HJM, on observe que modifier les deux paramètres qui le composent ne change pas les résultats. Une variation de 0.005 fois le prix de l'actif n'est pas suffisamment significative.
+Pour ce qui est du modèle de taux forward HJM, on observe que modifier les deux paramètres qui le composent ne change pas les résultats significativement, cela ne fait que bruiter.
 
 Passons au modèle action 
 
